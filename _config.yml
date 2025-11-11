@@ -1,6 +1,8 @@
 title: ショパコン勝手にYouTube聴衆賞(非公式再生数ランキング)
 description: ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。順位と関係なくやけに再生回数が伸びているコンテスタントがいて気になってしまったのでまとめました🥰
 theme: minima
+sass:
+  style: compressed
 
 header_pages:
   - index.md
