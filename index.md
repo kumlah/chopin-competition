@@ -1,6 +1,6 @@
 ---
 layout: default
-title: ショパンコン勝手にYouTube聴衆賞(非公式)
+title: ショパコン勝手にYouTube聴衆賞(非公式)
 ---
 
 # ショパンコンクール2025
