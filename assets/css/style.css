@@ -1,16 +1,2 @@
 body {
-  background-color: #fffaf0;  /* クリーム色（FloralWhite系） */
-  color: #333;
-}
-
-.site-header, .site-footer {
-  background-color: #f5deb3;  /* 小麦色。もう少し控えめなら #f8e5b2 もおすすめ */
-  color: #222;
-}
-
-a {
-  color: #a0522d; /* 焦げ茶寄りのリンク色 */
-}
-a:hover {
-  color: #8b4513;
 }
