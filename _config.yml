@@ -3,6 +3,5 @@ description: ショパン国際ピアノコンクールのYouTube再生数を個
 theme: minima
 header_pages:
   - index.md
-
-  sass:
+sass:
   style: compressed
