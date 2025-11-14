@@ -1,20 +1,23 @@
-name: Run 2025_final once
+name: Run 2025_final and commit
 
 on:
-  # 手動実行のみ（1回だけ実行したいときに Actions 画面からポチッとする）
   workflow_dispatch:
+
+permissions:
+  contents: write  # GITHUB_TOKEN でリポジトリ内容を書き換えるために必要
 
 jobs:
   run-2025_final:
     runs-on: ubuntu-latest
 
     env:
-      # GitHub Secrets に登録した API キーを環境変数として渡す
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # ちゃんと履歴付きでチェックアウト
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,10 +32,17 @@ jobs:
       - name: Run 2025_final.py
         run: python 2025_final.py
 
-      # 生成された JSON をアーティファクトとして保存しておくと便利
-      - name: Upload 2025_final.json artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: 2025_final-json
-          path: 2025_final.json
+      - name: Commit and push if 2025_final.json changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # 変更が無ければコミットしない
+          if git diff --quiet 2025_final.json; then
+            echo "No changes in 2025_final.json; nothing to commit."
+            exit 0
+          fi
+
+          git add 2025_final.json
+          git commit -m "Update 2025_final.json [skip ci]"
+          git push
