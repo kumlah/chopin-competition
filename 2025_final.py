@@ -1,9 +1,11 @@
 # 2025_final.py
 import os
 import json
-import sys
 import requests
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
+# YouTube APIキー（GitHub Actions では Secrets から渡す）
 API_KEY = os.environ.get("YOUTUBE_API_KEY", "YOUR_API_KEY_HERE")
 
 VIDEO_IDS = [
@@ -20,13 +22,14 @@ VIDEO_IDS = [
     "5duUDPKSrKk",
 ]
 
+OUTPUT_FILE = Path("2025_final.json")
 
-def check_api_key():
-    # ① そもそもAPIキーが入っているかチェック
-    if (API_KEY is None) or (API_KEY.strip() == "") or (API_KEY == "YOUR_API_KEY_HERE"):
-        print("【エラー】APIキーが設定されていません。")
-        print("環境変数 YOUTUBE_API_KEY を設定するか、コード内の API_KEY に直接キーを入れてください。")
-        sys.exit(1)
+
+def get_today_jst_date_str():
+    """JSTの日付（YYYY-MM-DD）を返す。"""
+    jst = timezone(timedelta(hours=9))
+    now_jst = datetime.now(jst)
+    return now_jst.strftime("%Y-%m-%d")
 
 
 def fetch_video_data():
@@ -40,46 +43,9 @@ def fetch_video_data():
     }
 
     resp = requests.get(url, params=params)
-
-    # ステータスコードだけ先に出す
-    print("HTTP STATUS:", resp.status_code)
-
-    if resp.status_code != 200:
-        # ② エラーの中身をできるだけ日本語で説明
-        try:
-            data = resp.json()
-        except Exception:
-            print("【エラー】YouTube APIのレスポンスがJSONとして読めませんでした。")
-            print("レスポンス本文:", resp.text)
-            sys.exit(1)
-
-        err = data.get("error", {})
-        msg = err.get("message", "エラーメッセージなし")
-        status = err.get("status", "不明")
-        reason = None
-        if isinstance(err.get("errors"), list) and err["errors"]:
-            reason = err["errors"][0].get("reason")
-
-        print("【YouTube API からのエラー】")
-        print("  status :", status)
-        print("  reason :", reason)
-        print("  message:", msg)
-
-        # よくあるパターンを軽く日本語解説
-        if reason == "accessNotConfigured":
-            print("\n→ YouTube Data API v3 が有効化されていない可能性があります。")
-            print("   Google Cloud Console で対象プロジェクトの YouTube Data API v3 を有効にしてください。")
-        elif "API key not valid" in msg:
-            print("\n→ APIキーが間違っているか、このプロジェクトのキーではない可能性があります。")
-        elif reason == "dailyLimitExceeded" or reason == "quotaExceeded":
-            print("\n→ クォータ（API使用量）の上限を超えています。時間をおくか、クォータ設定を確認してください。")
-        elif reason == "ipRefererBlocked":
-            print("\n→ APIキーの『アプリケーション制限』が現在の実行環境と合っていない可能性があります。")
-
-        sys.exit(1)
-
-    # 正常なときはこちら
+    resp.raise_for_status()
     data = resp.json()
+
     results = []
 
     for item in data.get("items", []):
@@ -104,16 +70,48 @@ def fetch_video_data():
     return results
 
 
+def load_existing_history():
+    """既存の2025_final.jsonを読み込んで、リストとして返す。なければ空リスト。"""
+    if not OUTPUT_FILE.exists():
+        return []
+
+    try:
+        with OUTPUT_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, list):
+            return data
+        else:
+            print("注意: 既存のJSONがリストではありません。新規に作り直します。")
+            return []
+    except Exception as e:
+        print(f"注意: 既存JSONの読み込みに失敗しました: {e}")
+        return []
+
+
 def main():
-    check_api_key()
+    # JSTの日付
+    date_str = get_today_jst_date_str()
 
+    # 動画情報を取得
     video_data = fetch_video_data()
-    output_file = "2025_final.json"
 
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(video_data, f, ensure_ascii=False, indent=2)
+    # 既存履歴を読み込み
+    history = load_existing_history()
 
-    print(f"{len(video_data)}件の動画情報を {output_file} に保存しました。")
+    # 今回分のエントリ
+    entry = {
+        "date": date_str,
+        "videos": video_data,
+    }
+
+    # 既存履歴に追加（同じ日付が既にあっても今回は気にせず追記）
+    history.append(entry)
+
+    # JSONとして保存
+    with OUTPUT_FILE.open("w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
+
+    print(f"{date_str} のデータとして {len(video_data)}件を履歴に追加し、{OUTPUT_FILE} を更新しました。")
 
 
 if __name__ == "__main__":
