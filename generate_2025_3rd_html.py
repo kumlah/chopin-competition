@@ -77,7 +77,7 @@ def get_flag_filename(country):
         "Japan": "japan.png",
         "Poland": "poland.png",
         "Malaysia": "malaysia.png",
-        "Republic of Korea":"korea.png",
+        "Republic of Korea": "korea.png",
         "Georgia": "georgia.png",
     }
     return mapping.get(country, "")
@@ -115,13 +115,7 @@ def main():
             if vid:
                 comp_by_video_id.setdefault(vid, comp)
 
-        # もし「第3ラウンド」列をまだ作ってなくて、
-        # とりあえずファイナル列に3次動画IDを入れているような暫定運用なら、
-        # 下のコメントアウトを外すとファイナル列もマッピングに含められます。
-        #
-        # final_vid = comp.get("ファイナル")
-        # if final_vid:
-        #     comp_by_video_id.setdefault(final_vid, comp)
+        # 必要ならファイナル列もマッピング対象にする場合はここに追加
 
     # 日付を "YYYY年MM月DD日(曜)" に整形
     try:
@@ -148,16 +142,11 @@ def main():
         pianist = comp.get("名前", "") or ""
         country = comp.get("国", "") or ""
 
-        # 最終順位と賞はファイナルと同じ列を利用（3次止まりは空想定）
-        fr_raw = comp.get("最終順位", "")
-        if fr_raw in ("", None):
-            finalRank = ""
-            finalRankNum = 999  # 順位なしはソート時の末尾へ
-        else:
-            finalRank = str(fr_raw)
-            finalRankNum = to_int_safe(fr_raw, 999)
+        # ファイナル進出判定：competitors.json の「ファイナル」列に値があれば 〇
+        final_val = comp.get("ファイナル", "")
+        finalist_flag = 1 if final_val not in ("", None) else 0
+        finalist_mark = "〇" if finalist_flag == 1 else ""
 
-        prize = comp.get("賞", "") or ""
         flag_file = get_flag_filename(country)
         pianist_sort_key = make_pianist_sort_key(pianist)
 
@@ -171,9 +160,8 @@ def main():
                 "pianist": pianist,
                 "pianistSortKey": pianist_sort_key,  # 姓ソート用キー
                 "country": country,
-                "finalRank": finalRank,
-                "finalRankNum": finalRankNum,
-                "prize": prize,
+                "finalistFlag": finalist_flag,       # ソート用（1:ファイナル進出, 0:非進出）
+                "finalistMark": finalist_mark,       # 表示用（〇 または 空）
                 # 国旗がある国だけパスを入れる。ない国は ""。
                 "flagPath": f"img/flag/{flag_file}" if flag_file else "",
             }
@@ -222,6 +210,9 @@ def main():
     html.append("      tbody tr:nth-child(even) { background: #fafafa; }")
     html.append("      .num-col { text-align: right; white-space: nowrap; }")
     html.append("      .rank-col { text-align: right; white-space: nowrap; }")
+    html.append(
+        "      .center-col { text-align: center; white-space: nowrap; }"
+    )
     html.append(
         "      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }"
     )
@@ -300,12 +291,12 @@ def main():
         "              </span>"
         "            </th>"
     )
-    # 最終順位
+    # ファイナル進出
     html.append(
-        "            <th style='width:6em;'>最終順位"
+        "            <th style='width:6em;'>ファイナル進出"
         "              <span class='sort-icons'>"
-        "                <span class='sort-icon' data-key='finalRankNum' data-dir='asc' data-type='number'>▲</span>"
-        "                <span class='sort-icon' data-key='finalRankNum' data-dir='desc' data-type='number'>▼</span>"
+        "                <span class='sort-icon' data-key='finalistFlag' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='finalistFlag' data-dir='desc' data-type='number'>▼</span>"
         "              </span>"
         "            </th>"
     )
@@ -334,13 +325,25 @@ function formatNumber(n){
   return n.toLocaleString('ja-JP');
 }
 
+// tbody内に再掲する見出し行（ソートアイコンなし）
+const repeatHeaderHtml = `
+  <tr class="repeat-header">
+    <th>名前</th>
+    <th style="width:6em;">国</th>
+    <th style="width:8em;">再生回数</th>
+    <th style="width:8em;">高評価数</th>
+    <th style="width:6em;">ファイナル進出</th>
+    <th style="width:11em;">動画</th>
+  </tr>
+`;
+
 function renderTable(list){
   const tbody = document.getElementById('ranking-body');
   tbody.innerHTML = '';
 
-  list.forEach(v=>{
-    const finalRank = v.finalRank ? v.finalRank : '—';
+  let rowCount = 0;
 
+  list.forEach((v, index)=>{
     let countryCellHtml = '';
     if (v.flagPath){
       // 国旗画像だけ表示。ソート用・意味付けとして alt/title に国名を入れる
@@ -361,7 +364,7 @@ function renderTable(list){
       <td>${countryCellHtml}</td>
       <td class="num-col">${formatNumber(v.viewCount)}</td>
       <td class="num-col">${formatNumber(v.likeCount)}</td>
-      <td class="rank-col">${finalRank}</td>
+      <td class="center-col">${v.finalistMark || ''}</td>
       <td>
         <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">
           <img src="${thumbUrl}" alt="YouTube thumbnail" class="thumb-img">
@@ -369,7 +372,20 @@ function renderTable(list){
       </td>
     `;
     tbody.appendChild(tr);
+    rowCount++;
+
+    // 10行ごとに見出し行を挿入（最後の行の直後は一旦スキップ）
+    if (rowCount % 10 === 0 && index !== list.length - 1){
+      const headerTr = document.createElement('tr');
+      headerTr.innerHTML = repeatHeaderHtml;
+      tbody.appendChild(headerTr);
+    }
   });
+
+  // 表の一番下にも見出し行を追加
+  const bottomHeaderTr = document.createElement('tr');
+  bottomHeaderTr.innerHTML = repeatHeaderHtml;
+  tbody.appendChild(bottomHeaderTr);
 }
 
 function sortAndRender(key, dir, type){
