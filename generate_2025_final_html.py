@@ -201,7 +201,7 @@ def main():
     with HTML_PATH.open("w", encoding="utf-8", newline="\n") as f:
         f.write(html_content)
 
-    print(f\"{HTML_PATH} を更新しました。\")
+    print(\"{HTML_PATH} を更新しました。\")
 
 
 if __name__ == \"__main__\":
