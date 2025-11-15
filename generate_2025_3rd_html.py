@@ -7,8 +7,8 @@ JSON_PATH = Path("2025_3rd.json")
 HTML_PATH = Path("2025_3rd.html")
 COMPETITORS_PATH = Path("competitors.json")
 
-# 第3ラウンドの動画IDが入っている列名
-ROUND_COLUMN = "第3ラウンド"
+# 第3ラウンドの候補列名（環境に合わせて増やしてOK）
+ROUND_COLUMNS = ["第3ラウンド", "3rd", "3rdラウンド"]
 
 
 def load_latest_videos():
@@ -85,7 +85,6 @@ def get_flag_filename(country):
 def make_pianist_sort_key(name: str) -> str:
     """
     姓でソートするためのキーを作る。
-    ルール:
       - スペース区切りで分割
       - 最後の単語を姓とみなす
       - ソートキーは 'lastname, other parts' の形（すべて小文字）
@@ -106,12 +105,22 @@ def main():
     target_date, videos_raw = load_latest_videos()
     competitors_raw = load_competitors()
 
-    # 2025_3rd.json 側の統計: videoId → 統計 dict
-    stats_map = {}
-    for v in videos_raw:
-        vid = v.get("videoId") or v.get("id")
-        if vid:
-            stats_map[vid] = v
+    # competitors.json を「videoId → 出場者情報」で引ける辞書にする
+    comp_by_video_id = {}
+    for comp in competitors_raw:
+        # 第3ラウンド用の列
+        for col in ROUND_COLUMNS:
+            vid = comp.get(col)
+            if vid:
+                comp_by_video_id.setdefault(vid, comp)
+
+        # もし「第3ラウンド」列をまだ作ってなくて、
+        # とりあえずファイナル列に3次動画IDを入れているような暫定運用なら、
+        # 下のコメントアウトを外すとファイナル列もマッピングに含められます。
+        #
+        # final_vid = comp.get("ファイナル")
+        # if final_vid:
+        #     comp_by_video_id.setdefault(final_vid, comp)
 
     # 日付を "YYYY年MM月DD日(曜)" に整形
     try:
@@ -122,17 +131,18 @@ def main():
         target_date_jp = target_date
 
     videos = []
-    unmatched_count = 0  # 統計が見つからなかった第3ラウンド動画の本数
+    unmatched_count = 0  # 出場者情報が見つからなかった動画の本数
 
-    # ★ 第3ラウンド動画IDが入っている人だけ対象にする
-    round3_comps = [c for c in competitors_raw if c.get(ROUND_COLUMN)]
+    # ★ JSON 側(videos_raw)を軸に回していく
+    for stats in videos_raw:
+        video_id = stats.get("videoId") or stats.get("id")
+        if not video_id:
+            continue
 
-    for comp in round3_comps:
-        video_id = comp.get(ROUND_COLUMN, "")
-        stats = stats_map.get(video_id)
-        if stats is None:
+        comp = comp_by_video_id.get(video_id)
+        if comp is None:
             unmatched_count += 1
-            stats = {}
+            comp = {}
 
         pianist = comp.get("名前", "") or ""
         country = comp.get("国", "") or ""
@@ -148,7 +158,6 @@ def main():
 
         prize = comp.get("賞", "") or ""
         flag_file = get_flag_filename(country)
-
         pianist_sort_key = make_pianist_sort_key(pianist)
 
         videos.append(
@@ -244,7 +253,7 @@ def main():
 
     if unmatched_count > 0:
         html.append(
-            f'      <p style="color:#777;font-size:0.85rem;">※ {unmatched_count} 本は再生数データが見つかりませんでした（再生回数などが 0 として表示されます）。</p>'
+            f'      <p style="color:#777;font-size:0.85rem;">※ {unmatched_count} 本は competitors.json に対応する出場者情報が見つかりませんでした（名前・国が空欄で表示されます）。</p>'
         )
 
     html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール 第3ラウンド再生数ランキング</h1>")
@@ -290,7 +299,7 @@ def main():
         "              </span>"
         "            </th>"
     )
-    # 最終順位（ファイナル進出者には数字、それ以外は空でダッシュ表示）
+    # 最終順位
     html.append(
         "            <th style='width:6em;'>最終順位"
         "              <span class='sort-icons'>"
