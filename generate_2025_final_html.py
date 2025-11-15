@@ -122,11 +122,12 @@ def main():
         pianist = comp.get("名前", "") if comp else ""
         country = comp.get("国", "") if comp else ""
         final_rank_raw = comp.get("最終順位", "") if comp else ""
-        # 最終順位は文字列として扱う（空なら "" のまま）
         if final_rank_raw in (None, ""):
             final_rank = ""
+            final_rank_num = 999  # 順位なしはソート時に末尾へ
         else:
             final_rank = str(final_rank_raw)
+            final_rank_num = to_int_safe(final_rank_raw, 999)
         prize = comp.get("賞", "") if comp else ""
 
         videos.append(
@@ -140,6 +141,7 @@ def main():
                 "pianist": pianist,
                 "country": country,
                 "finalRank": final_rank,
+                "finalRankNum": final_rank_num,
                 "prize": prize,
             }
         )
@@ -189,17 +191,12 @@ def main():
             f"  <div class=\"note small\">※ 注意: {unmatched_count} 本の動画はタイトルから出演者名を特定できませんでした（名前・国・順位などが空欄になっています）。</div>"
         )
 
-    # テーブル本体（タイトル列は出さない）
+    # テーブル本体（タイトル・GitHub上の順位列などは出さない）
     html_lines.append("  <table>")
     html_lines.append("    <thead>")
     html_lines.append("      <tr>")
-    html_lines.append("        <th style=\"width:3em;\">順位</th>")
     html_lines.append("        <th>名前</th>")
     html_lines.append("        <th style=\"width:10em;\">国</th>")
-    html_lines.append("        <th style=\"width:4em;\">最終順位</th>")
-    html_lines.append("        <th style=\"width:8em;\">賞</th>")
-    html_lines.append("        <th style=\"width:8em;\">動画ID</th>")
-    html_lines.append("        <th style=\"width:12em;\">投稿日 (UTC)</th>")
     html_lines.append(
         "        <th style=\"width:8em;\">再生回数"
         "          <span class=\"sort-icons\">"
@@ -213,6 +210,14 @@ def main():
         "          <span class=\"sort-icons\">"
         "            <span class=\"sort-icon\" data-key=\"likeCount\" data-dir=\"asc\" title=\"高評価 少ない順\">▲</span>"
         "            <span class=\"sort-icon\" data-key=\"likeCount\" data-dir=\"desc\" title=\"高評価 多い順\">▼</span>"
+        "          </span>"
+        "        </th>"
+    )
+    html_lines.append(
+        "        <th style=\"width:6em;\">最終順位"
+        "          <span class=\"sort-icons\">"
+        "            <span class=\"sort-icon\" data-key=\"finalRankNum\" data-dir=\"asc\" title=\"最終順位 昇順\">▲</span>"
+        "            <span class=\"sort-icon\" data-key=\"finalRankNum\" data-dir=\"desc\" title=\"最終順位 降順\">▼</span>"
         "          </span>"
         "        </th>"
     )
@@ -235,19 +240,15 @@ def main():
     html_lines.append("    function renderTable(list) {")
     html_lines.append("      const tbody = document.getElementById('ranking-body');")
     html_lines.append("      tbody.innerHTML = '';")
-    html_lines.append("      list.forEach((v, index) => {")
+    html_lines.append("      list.forEach((v) => {")
     html_lines.append("        const finalRank = v.finalRank && v.finalRank !== '' ? v.finalRank : '—';")
     html_lines.append("        const tr = document.createElement('tr');")
     html_lines.append("        tr.innerHTML = `")
-    html_lines.append("          <td class=\"rank-col\">${index + 1}</td>")
     html_lines.append("          <td>${v.pianist || ''}</td>")
     html_lines.append("          <td>${v.country || ''}</td>")
-    html_lines.append("          <td class=\"rank-col\">${finalRank}</td>")
-    html_lines.append("          <td>${v.prize || ''}</td>")
-    html_lines.append("          <td><code>${v.videoId}</code></td>")
-    html_lines.append("          <td>${v.publishedAt}</td>")
     html_lines.append("          <td class=\"num-col\">${formatNumber(v.viewCount)}</td>")
     html_lines.append("          <td class=\"num-col\">${formatNumber(v.likeCount)}</td>")
+    html_lines.append("          <td class=\"rank-col\">${finalRank}</td>")
     html_lines.append("          <td><a href=\"${v.url}\" target=\"_blank\" rel=\"noopener noreferrer\">リンク</a></td>")
     html_lines.append("        `;")
     html_lines.append("        tbody.appendChild(tr);")
