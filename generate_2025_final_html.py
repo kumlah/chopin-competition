@@ -222,6 +222,10 @@ def main():
     html.append(
         "      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }"
     )
+    # ★ サムネ用のスタイルを追加
+    html.append(
+        "      .thumb-img { width: 120px; aspect-ratio: 16/9; object-fit: cover; display: block; }"
+    )
     html.append("    </style>")
 
     html.append("  </head>")
@@ -298,7 +302,8 @@ def main():
         "              </span>"
         "            </th>"
     )
-    html.append("            <th style='width:5em;'>URL</th>")
+    # ★ 動画列は幅を少し広めに
+    html.append("            <th style='width:11em;'>動画</th>")
     html.append("          </tr>")
     html.append("        </thead>")
     html.append("        <tbody id='ranking-body'></tbody>")
@@ -318,6 +323,7 @@ def main():
     html.append(
         r"""
 function formatNumber(n){
+  if (n === null || n === undefined) return '';
   return n.toLocaleString('ja-JP');
 }
 
@@ -338,6 +344,10 @@ function renderTable(list){
       countryCellHtml = countryText;
     }
 
+    // ★ サムネイルURL（mqdefault あたりがそこそこきれい）
+    const thumbUrl = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
+    const videoUrl  = v.url || `https://www.youtube.com/watch?v=${v.videoId}`;
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${v.pianist || ''}</td>
@@ -345,7 +355,11 @@ function renderTable(list){
       <td class="num-col">${formatNumber(v.viewCount)}</td>
       <td class="num-col">${formatNumber(v.likeCount)}</td>
       <td class="rank-col">${finalRank}</td>
-      <td><a href="${v.url}" target="_blank" rel="noopener noreferrer">リンク</a></td>
+      <td>
+        <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">
+          <img src="${thumbUrl}" alt="YouTube thumbnail" class="thumb-img">
+        </a>
+      </td>
     `;
     tbody.appendChild(tr);
   });
