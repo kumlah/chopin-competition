@@ -9,7 +9,7 @@ HTML_PATH = Path("2025_final.html")
 
 def load_latest_videos():
     if not JSON_PATH.exists():
-        raise FileNotFoundError(f"{JSON_PATH} が見つかりません。パスを確認してください。")
+        raise FileNotFoundError("{JSON_PATH} が見つかりません。パスを確認してください。")
 
     with JSON_PATH.open("r", encoding="utf-8") as f:
         data = json.load(f)
