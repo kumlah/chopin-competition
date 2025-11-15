@@ -9,7 +9,8 @@ HTML_PATH = Path("2025_final.html")
 
 def load_latest_videos():
     if not JSON_PATH.exists():
-        raise FileNotFoundError("{JSON_PATH} が見つかりません。パスを確認してください。")
+        # f文字列に修正
+        raise FileNotFoundError(f"{JSON_PATH} が見つかりません。パスを確認してください。")
 
     with JSON_PATH.open("r", encoding="utf-8") as f:
         data = json.load(f)
@@ -46,10 +47,11 @@ def to_int_safe(value, default=0):
 def main():
     target_date, videos_raw = load_latest_videos()
 
-    # 日付を "YYYY年MM月DD日" に整形
+    # 日付を "YYYY年MM月DD日(曜)" に整形
     try:
         dt = datetime.fromisoformat(target_date)
-        target_date_jp = dt.strftime("%Y年%m月%d日")
+        weekday_ja = "月火水木金土日"[dt.weekday()]  # 0=月, 6=日
+        target_date_jp = dt.strftime("%Y年%m月%d日") + f"({weekday_ja})"
     except Exception:
         target_date_jp = target_date
 
@@ -86,9 +88,6 @@ def main():
     html_lines.append("    h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }")
     html_lines.append("    .meta { font-size: 0.9rem; color: #555; margin-bottom: 1rem; }")
     html_lines.append("    .note { font-size: 0.9rem; margin-bottom: 1rem; }")
-    html_lines.append("    .controls { margin: 1rem 0; }")
-    html_lines.append("    .controls button { margin: 0.2rem; padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; background: #f5f5f5; }")
-    html_lines.append("    .controls button.active { background: #333; color: #fff; border-color: #333; }")
     html_lines.append("    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.9rem; }")
     html_lines.append("    th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }")
     html_lines.append("    th { background: #f0f0f0; }")
@@ -97,22 +96,17 @@ def main():
     html_lines.append("    .rank-col { text-align: right; }")
     html_lines.append("    .num-col { text-align: right; white-space: nowrap; }")
     html_lines.append("    .small { font-size: 0.8rem; color: #777; }")
+    html_lines.append("    .sort-icons { margin-left: 0.25rem; white-space: nowrap; font-size: 0.75rem; }")
+    html_lines.append("    .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }")
+    html_lines.append("    .sort-icon.active { color: #000; font-weight: bold; }")
     html_lines.append("  </style>")
     html_lines.append("</head>")
     html_lines.append("<body>")
     html_lines.append("  <h1>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</h1>")
     html_lines.append(f"  <div class=\"meta\">集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</div>")
+    html_lines.append("  <div class=\"note\">※ 2025_final.json をもとに自動生成されたランキングです。</div>")
 
-    # 並べ替えボタン
-    html_lines.append("  <div class=\"controls\">")
-    html_lines.append("    <span class=\"small\">並べ替え: </span>")
-    html_lines.append("    <button data-key=\"viewCount\" data-dir=\"desc\" class=\"active\">再生回数 多い順</button>")
-    html_lines.append("    <button data-key=\"viewCount\" data-dir=\"asc\">再生回数 少ない順</button>")
-    html_lines.append("    <button data-key=\"likeCount\" data-dir=\"desc\">高評価 多い順</button>")
-    html_lines.append("    <button data-key=\"likeCount\" data-dir=\"asc\">高評価 少ない順</button>")
-    html_lines.append("  </div>")
-
-    # テーブル本体
+    # テーブル本体（▲▼はヘッダー内に仕込む）
     html_lines.append("  <table>")
     html_lines.append("    <thead>")
     html_lines.append("      <tr>")
@@ -120,8 +114,22 @@ def main():
     html_lines.append("        <th>ピアニスト / タイトル</th>")
     html_lines.append("        <th style=\"width:8em;\">動画ID</th>")
     html_lines.append("        <th style=\"width:12em;\">投稿日 (UTC)</th>")
-    html_lines.append("        <th style=\"width:8em;\">再生回数</th>")
-    html_lines.append("        <th style=\"width:8em;\">高評価数</th>")
+    html_lines.append(
+        "        <th style=\"width:8em;\">再生回数"
+        "          <span class=\"sort-icons\">"
+        "            <span class=\"sort-icon\" data-key=\"viewCount\" data-dir=\"asc\" title=\"再生回数 少ない順\">▲</span>"
+        "            <span class=\"sort-icon\" data-key=\"viewCount\" data-dir=\"desc\" title=\"再生回数 多い順\">▼</span>"
+        "          </span>"
+        "        </th>"
+    )
+    html_lines.append(
+        "        <th style=\"width:8em;\">高評価数"
+        "          <span class=\"sort-icons\">"
+        "            <span class=\"sort-icon\" data-key=\"likeCount\" data-dir=\"asc\" title=\"高評価 少ない順\">▲</span>"
+        "            <span class=\"sort-icon\" data-key=\"likeCount\" data-dir=\"desc\" title=\"高評価 多い順\">▼</span>"
+        "          </span>"
+        "        </th>"
+    )
     html_lines.append("        <th style=\"width:5em;\">URL</th>")
     html_lines.append("      </tr>")
     html_lines.append("    </thead>")
@@ -169,22 +177,26 @@ def main():
     html_lines.append("      renderTable(sorted);")
     html_lines.append("    }")
     html_lines.append("")
-    html_lines.append("    function setupControls() {")
-    html_lines.append("      const buttons = document.querySelectorAll('.controls button');")
-    html_lines.append("      buttons.forEach(btn => {")
-    html_lines.append("        btn.addEventListener('click', () => {")
-    html_lines.append("          buttons.forEach(b => b.classList.remove('active'));")
-    html_lines.append("          btn.classList.add('active');")
-    html_lines.append("          const key = btn.getAttribute('data-key');")
-    html_lines.append("          const dir = btn.getAttribute('data-dir');")
+    html_lines.append("    function setupSortIcons() {")
+    html_lines.append("      const icons = document.querySelectorAll('.sort-icon');")
+    html_lines.append("      icons.forEach(icon => {")
+    html_lines.append("        icon.addEventListener('click', () => {")
+    html_lines.append("          const key = icon.getAttribute('data-key');")
+    html_lines.append("          const dir = icon.getAttribute('data-dir');")
+    html_lines.append("          icons.forEach(i => i.classList.remove('active'));")
+    html_lines.append("          icon.classList.add('active');")
     html_lines.append("          sortAndRender(key, dir);")
     html_lines.append("        });")
     html_lines.append("      });")
     html_lines.append("    }")
     html_lines.append("")
-    html_lines.append("    // 初期表示: 再生回数 多い順")
+    html_lines.append("    // 初期表示: 再生回数 多い順（▼ をデフォルトアクティブ）")
     html_lines.append("    document.addEventListener('DOMContentLoaded', () => {")
-    html_lines.append("      setupControls();")
+    html_lines.append("      setupSortIcons();")
+    html_lines.append("      const defaultIcon = document.querySelector('.sort-icon[data-key=\"viewCount\"][data-dir=\"desc\"]');")
+    html_lines.append("      if (defaultIcon) {")
+    html_lines.append("        defaultIcon.classList.add('active');")
+    html_lines.append("      }")
     html_lines.append("      sortAndRender('viewCount', 'desc');")
     html_lines.append("    });")
     html_lines.append("  </script>")
