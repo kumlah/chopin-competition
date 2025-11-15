@@ -8,7 +8,7 @@ HTML_PATH = Path("2025_3rd.html")
 COMPETITORS_PATH = Path("competitors.json")
 
 # 第3ラウンドの候補列名（環境に合わせて増やしてOK）
-ROUND_COLUMNS = ["第3ラウンド", "3rd", "3rdラウンド"]
+ROUND_COLUMNS = ["第3"]
 
 
 def load_latest_videos():
@@ -77,6 +77,7 @@ def get_flag_filename(country):
         "Japan": "japan.png",
         "Poland": "poland.png",
         "Malaysia": "malaysia.png",
+        "Republic of Korea":"korea.png",
         "Georgia": "georgia.png",
     }
     return mapping.get(country, "")
