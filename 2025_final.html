@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+           max-width: 1000px; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.6; }
+    h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+    .meta { font-size: 0.9rem; color: #555; margin-bottom: 1rem; }
+    .note { font-size: 0.9rem; margin-bottom: 1rem; }
+    .controls { margin: 1rem 0; }
+    .controls button { margin: 0.2rem; padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; background: #f5f5f5; }
+    .controls button.active { background: #333; color: #fff; border-color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.9rem; }
+    th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }
+    th { background: #f0f0f0; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+    code { font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
+    .rank-col { text-align: right; }
+    .num-col { text-align: right; white-space: nowrap; }
+    .small { font-size: 0.8rem; color: #777; }
+  </style>
+</head>
+<body>
+  <h1>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</h1>
+  <div class="meta">集計日: 2025年11月15日 ／ 最終更新（JST）: 2025年11月15日 13:33:03 ／ 対象動画数: 11 本</div>
+  <div class="note">※ 2025_final.json をもとに自動生成されたランキングです。</div>
+  <div class="controls">
+    <span class="small">並べ替え: </span>
+    <button data-key="viewCount" data-dir="desc" class="active">再生回数 多い順</button>
+    <button data-key="viewCount" data-dir="asc">再生回数 少ない順</button>
+    <button data-key="likeCount" data-dir="desc">高評価 多い順</button>
+    <button data-key="likeCount" data-dir="asc">高評価 少ない順</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:3em;">順位</th>
+        <th>ピアニスト / タイトル</th>
+        <th style="width:8em;">動画ID</th>
+        <th style="width:12em;">投稿日 (UTC)</th>
+        <th style="width:8em;">再生回数</th>
+        <th style="width:8em;">高評価数</th>
+        <th style="width:5em;">URL</th>
+      </tr>
+    </thead>
+    <tbody id="ranking-body">
+      <!-- JavaScript で埋め込み -->
+    </tbody>
+  </table>
+  <script>
+    const videos = [{"videoId": "BOCTW4qyDqY", "url": "https://www.youtube.com/watch?v=BOCTW4qyDqY", "publishedAt": "2025-10-20T05:09:40Z", "title": "PIOTR ALEXEWICZ – final round (19th Chopin Competition, Warsaw)", "viewCount": 217068, "likeCount": 3919}, {"videoId": "_QgvXbaLFPs", "url": "https://www.youtube.com/watch?v=_QgvXbaLFPs", "publishedAt": "2025-10-20T21:34:03Z", "title": "KEVIN CHEN – final round (19th Chopin Competition, Warsaw)", "viewCount": 200267, "likeCount": 2696}, {"videoId": "QklhpTBNp3s", "url": "https://www.youtube.com/watch?v=QklhpTBNp3s", "publishedAt": "2025-10-20T21:29:39Z", "title": "DAVID KHRIKULI – final round (19th Chopin Competition, Warsaw)", "viewCount": 135191, "likeCount": 4588}, {"videoId": "8gphqTkmnR8", "url": "https://www.youtube.com/watch?v=8gphqTkmnR8", "publishedAt": "2025-10-20T23:54:39Z", "title": "SHIORI KUWAHARA – final round (19th Chopin Competition, Warsaw)", "viewCount": 511032, "likeCount": 9546}, {"videoId": "tYfpS1jt8ck", "url": "https://www.youtube.com/watch?v=tYfpS1jt8ck", "publishedAt": "2025-10-19T11:30:54Z", "title": "TIANYOU LI  – final round (19th Chopin Competition, Warsaw)", "viewCount": 60288, "likeCount": 1078}, {"videoId": "GFTHzzFA-TQ", "url": "https://www.youtube.com/watch?v=GFTHzzFA-TQ", "publishedAt": "2025-10-18T21:45:40Z", "title": "ERIC LU – final round (19th Chopin Competition, Warsaw)", "viewCount": 1046962, "likeCount": 15308}, {"videoId": "_G0TBsTYjvQ", "url": "https://www.youtube.com/watch?v=_G0TBsTYjvQ", "publishedAt": "2025-10-19T01:46:32Z", "title": "TIANYAO LYU – final round (19th Chopin Competition, Warsaw)", "viewCount": 741957, "likeCount": 13767}, {"videoId": "xsVgT3vtruM", "url": "https://www.youtube.com/watch?v=xsVgT3vtruM", "publishedAt": "2025-10-19T08:03:06Z", "title": "VINCENT ONG – final round (19th Chopin Competition, Warsaw)", "viewCount": 476648, "likeCount": 10395}, {"videoId": "1WdkvGV7sBY", "url": "https://www.youtube.com/watch?v=1WdkvGV7sBY", "publishedAt": "2025-10-19T21:06:00Z", "title": "MIYU SHINDO – final round (19th Chopin Competition, Warsaw)", "viewCount": 290767, "likeCount": 6297}, {"videoId": "omqTpiBXfnA", "url": "https://www.youtube.com/watch?v=omqTpiBXfnA", "publishedAt": "2025-10-19T20:03:02Z", "title": "ZITONG WANG – final round (19th Chopin Competition, Warsaw)", "viewCount": 184249, "likeCount": 2927}, {"videoId": "5duUDPKSrKk", "url": "https://www.youtube.com/watch?v=5duUDPKSrKk", "publishedAt": "2025-10-19T22:59:44Z", "title": "WILLIAM YANG – final round (19th Chopin Competition, Warsaw)", "viewCount": 93356, "likeCount": 1819}];
+
+    function formatNumber(n) {
+      return n.toLocaleString('ja-JP');
+    }
+
+    function renderTable(list) {
+      const tbody = document.getElementById('ranking-body');
+      tbody.innerHTML = '';
+      list.forEach((v, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank-col">${index + 1}</td>
+          <td>${v.title}</td>
+          <td><code>${v.videoId}</code></td>
+          <td>${v.publishedAt}</td>
+          <td class="num-col">${formatNumber(v.viewCount)}</td>
+          <td class="num-col">${formatNumber(v.likeCount)}</td>
+          <td><a href="${v.url}" target="_blank" rel="noopener noreferrer">リンク</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function sortAndRender(key, dir) {
+      const sorted = [...videos].sort((a, b) => {
+        const va = a[key] ?? 0;
+        const vb = b[key] ?? 0;
+        if (dir === 'asc') {
+          return va - vb;
+        } else {
+          return vb - va;
+        }
+      });
+      renderTable(sorted);
+    }
+
+    function setupControls() {
+      const buttons = document.querySelectorAll('.controls button');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const key = btn.getAttribute('data-key');
+          const dir = btn.getAttribute('data-dir');
+          sortAndRender(key, dir);
+        });
+      });
+    }
+
+    // 初期表示: 再生回数 多い順
+    document.addEventListener('DOMContentLoaded', () => {
+      setupControls();
+      sortAndRender('viewCount', 'desc');
+    });
+  </script>
+</body>
+</html>
