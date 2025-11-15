@@ -8,21 +8,8 @@ from pathlib import Path
 # YouTube APIキー（GitHub Actions では Secrets から渡す）
 API_KEY = os.environ.get("YOUTUBE_API_KEY", "YOUR_API_KEY_HERE")
 
-VIDEO_IDS = [
-    "BOCTW4qyDqY",
-    "_QgvXbaLFPs",
-    "QklhpTBNp3s",
-    "8gphqTkmnR8",
-    "tYfpS1jt8ck",
-    "GFTHzzFA-TQ",
-    "_G0TBsTYjvQ",
-    "xsVgT3vtruM",
-    "1WdkvGV7sBY",
-    "omqTpiBXfnA",
-    "5duUDPKSrKk",
-]
-
 OUTPUT_FILE = Path("2025_final.json")
+COMPETITORS_PATH = Path("competitors.json")
 
 
 def get_today_jst_date_str():
@@ -32,40 +19,83 @@ def get_today_jst_date_str():
     return now_jst.strftime("%Y-%m-%d")
 
 
-def fetch_video_data():
+def load_video_ids_from_competitors():
+    """
+    competitors.json から「ファイナル」列に動画IDが入っているものだけを抽出し、
+    順番を保ったまま重複を取り除いたリストを返す。
+    """
+    if not COMPETITORS_PATH.exists():
+        raise FileNotFoundError(f"{COMPETITORS_PATH} が見つかりません。")
+
+    with COMPETITORS_PATH.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    if not isinstance(data, list):
+        raise ValueError("competitors.json の最上位はリスト形式を想定しています。")
+
+    video_ids = []
+    seen = set()
+
+    for comp in data:
+        vid = comp.get("ファイナル")
+        if not vid:
+            continue
+        if vid in seen:
+            continue
+        seen.add(vid)
+        video_ids.append(vid)
+
+    if not video_ids:
+        raise ValueError("competitors.json にファイナル動画IDが1件も見つかりませんでした。")
+
+    return video_ids
+
+
+def fetch_video_data(video_ids):
+    """
+    与えられた video_ids の統計情報を YouTube Data API から取得して返す。
+    タイトルは保存しない（title キーを持たせない）。
+    """
+    if not video_ids:
+        return []
+
     url = "https://www.googleapis.com/youtube/v3/videos"
-
-    params = {
-        "part": "snippet,statistics",
-        "id": ",".join(VIDEO_IDS),
-        "key": API_KEY,
-        "maxResults": 50,
-    }
-
-    resp = requests.get(url, params=params)
-    resp.raise_for_status()
-    data = resp.json()
-
     results = []
 
-    for item in data.get("items", []):
-        vid = item.get("id")
-        snippet = item.get("snippet", {})
-        stats = item.get("statistics", {})
+    # 念のため50件ずつに分割（YouTube APIのidパラメータ上限対策）
+    chunk_size = 50
+    for i in range(0, len(video_ids), chunk_size):
+        chunk = video_ids[i : i + chunk_size]
 
-        like_count = stats.get("likeCount")
-        if like_count is not None:
-            like_count = int(like_count)
-
-        result = {
-            "videoId": vid,
-            "url": f"https://www.youtube.com/watch?v={vid}",
-            "publishedAt": snippet.get("publishedAt"),
-            "title": snippet.get("title"),
-            "viewCount": int(stats.get("viewCount", 0)),
-            "likeCount": like_count,
+        params = {
+            "part": "snippet,statistics",  # publishedAt を取るために snippet は残す
+            "id": ",".join(chunk),
+            "key": API_KEY,
+            "maxResults": 50,
         }
-        results.append(result)
+
+        resp = requests.get(url, params=params)
+        resp.raise_for_status()
+        data = resp.json()
+
+        for item in data.get("items", []):
+            vid = item.get("id")
+            snippet = item.get("snippet", {})
+            stats = item.get("statistics", {})
+
+            like_count = stats.get("likeCount")
+            if like_count is not None:
+                like_count = int(like_count)
+
+            result = {
+                "videoId": vid,
+                "url": f"https://www.youtube.com/watch?v={vid}",
+                "publishedAt": snippet.get("publishedAt"),
+                # title は保存しない
+                "viewCount": int(stats.get("viewCount", 0)),
+                "likeCount": like_count,
+            }
+            results.append(result)
 
     return results
 
@@ -92,8 +122,11 @@ def main():
     # JSTの日付
     date_str = get_today_jst_date_str()
 
+    # competitors.json からファイナル動画ID一覧を取得
+    video_ids = load_video_ids_from_competitors()
+
     # 動画情報を取得
-    video_data = fetch_video_data()
+    video_data = fetch_video_data(video_ids)
 
     # 既存履歴を読み込み
     history = load_existing_history()
@@ -111,7 +144,9 @@ def main():
     with OUTPUT_FILE.open("w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
-    print(f"{date_str} のデータとして {len(video_data)}件を履歴に追加し、{OUTPUT_FILE} を更新しました。")
+    print(
+        f"{date_str} のデータとして {len(video_data)}件を履歴に追加し、{OUTPUT_FILE} を更新しました。"
+    )
 
 
 if __name__ == "__main__":
