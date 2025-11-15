@@ -1,4 +1,4 @@
-name: Generate 2025_final.md
+name: Generate 2025_final.html
 
 on:
   workflow_dispatch:  # 手動実行トリガー
@@ -25,17 +25,17 @@ jobs:
           # 追加でライブラリが必要ならここに書く
           # 例: pip install pytz
 
-      - name: 2025_final.md を生成
-        run: python generate_2025_final_md.py
+      - name: 2025_final.html を生成
+        run: python generate_2025_final_html.py
 
       - name: 変更をコミットしてプッシュ
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add 2025_final.md
+          git add 2025_final.html
 
           # 変更がない場合はコミットしない
-          git commit -m "Update 2025_final.md [skip ci]" || echo "No changes to commit"
+          git commit -m "Update 2025_final.html [skip ci]" || echo "No changes to commit"
 
           git push
