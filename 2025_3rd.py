@@ -11,10 +11,6 @@ API_KEY = os.environ.get("YOUTUBE_API_KEY", "YOUR_API_KEY_HERE")
 OUTPUT_FILE = Path("2025_3rd.json")
 COMPETITORS_PATH = Path("competitors.json")
 
-# competitors.json の「第3」列名
-# 列名が違う場合はここを書き換えてください
-ROUND_COLUMN = "第3"
-
 
 def get_today_jst_date_str():
     """JSTの日付（YYYY-MM-DD）を返す。"""
@@ -25,7 +21,7 @@ def get_today_jst_date_str():
 
 def load_video_ids_from_competitors():
     """
-    competitors.json から「第3」列(ROUND_COLUMN)に動画IDが入っているものだけを抽出し、
+    competitors.json から「第3」列に動画IDが入っているものだけを抽出し、
     順番を保ったまま重複を取り除いたリストを返す。
     """
     if not COMPETITORS_PATH.exists():
@@ -41,7 +37,7 @@ def load_video_ids_from_competitors():
     seen = set()
 
     for comp in data:
-        vid = comp.get(ROUND_COLUMN)
+        vid = comp.get("第3")
         if not vid:
             continue
         if vid in seen:
@@ -50,9 +46,7 @@ def load_video_ids_from_competitors():
         video_ids.append(vid)
 
     if not video_ids:
-        raise ValueError(
-            f"competitors.json に {ROUND_COLUMN} の動画IDが1件も見つかりませんでした。"
-        )
+        raise ValueError("competitors.json に第3ラウンドの動画IDが1件も見つかりませんでした。")
 
     return video_ids
 
