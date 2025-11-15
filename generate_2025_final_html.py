@@ -47,7 +47,7 @@ def load_competitors():
 
 
 def find_competitor_for_title(title, competitors):
-    """動画タイトルに含まれる名前（大文字小文字無視）で competitors を検索"""
+    """※今は使っていないが、念のため残しておく"""
     if not title:
         return None
     title_lower = title.lower()
@@ -108,6 +108,13 @@ def main():
     target_date, videos_raw = load_latest_videos()
     competitors_raw = load_competitors()
 
+    # 2025_final.json 側の統計: videoId → 統計 dict
+    stats_map = {}
+    for v in videos_raw:
+        vid = v.get("videoId") or v.get("id")
+        if vid:
+            stats_map[vid] = v
+
     # 日付を "YYYY年MM月DD日(曜)" に整形
     try:
         dt = datetime.fromisoformat(target_date)
@@ -117,19 +124,22 @@ def main():
         target_date_jp = target_date
 
     videos = []
-    unmatched_count = 0
+    unmatched_count = 0  # 統計が見つからなかったファイナル動画の本数
 
-    for v in videos_raw:
-        title = v.get("title", "") or ""
-        comp = find_competitor_for_title(title, competitors_raw)
+    # ★ ファイナル動画IDが入っている人だけ対象にする
+    finalists = [c for c in competitors_raw if c.get("ファイナル")]
 
-        if comp is None:
+    for comp in finalists:
+        video_id = comp.get("ファイナル", "")
+        stats = stats_map.get(video_id)
+        if stats is None:
             unmatched_count += 1
+            stats = {}
 
-        pianist = comp.get("名前", "") if comp else ""
-        country = comp.get("国", "") if comp else ""
+        pianist = comp.get("名前", "") or ""
+        country = comp.get("国", "") or ""
 
-        fr_raw = comp.get("最終順位", "") if comp else ""
+        fr_raw = comp.get("最終順位", "")
         if fr_raw in ("", None):
             final_rank = ""
             final_rank_num = 999  # 順位なしはソート時の末尾へ
@@ -137,20 +147,20 @@ def main():
             final_rank = str(fr_raw)
             final_rank_num = to_int_safe(fr_raw, 999)
 
-        prize = comp.get("賞", "") if comp else ""
+        prize = comp.get("賞", "") or ""
         flag_file = get_flag_filename(country)
 
         pianist_sort_key = make_pianist_sort_key(pianist)
 
         videos.append(
             {
-                "videoId": v.get("videoId", ""),
-                "url": v.get("url", ""),
-                "publishedAt": v.get("publishedAt", ""),
-                "viewCount": to_int_safe(v.get("viewCount")),
-                "likeCount": to_int_safe(v.get("likeCount")),
+                "videoId": video_id,
+                "url": stats.get("url") or f"https://www.youtube.com/watch?v={video_id}",
+                "publishedAt": stats.get("publishedAt", ""),
+                "viewCount": to_int_safe(stats.get("viewCount")),
+                "likeCount": to_int_safe(stats.get("likeCount")),
                 "pianist": pianist,
-                "pianistSortKey": pianist_sort_key,  # ★ 姓ソート用キー
+                "pianistSortKey": pianist_sort_key,  # 姓ソート用キー
                 "country": country,
                 "finalRank": final_rank,
                 "finalRankNum": final_rank_num,
@@ -233,7 +243,7 @@ def main():
 
     if unmatched_count > 0:
         html.append(
-            f'      <p style="color:#777;font-size:0.85rem;">※ {unmatched_count} 本は名前マッチできませんでした（名前・国・最終順位などが空欄になります）。</p>'
+            f'      <p style="color:#777;font-size:0.85rem;">※ {unmatched_count} 本は再生数データが見つかりませんでした（再生回数などが 0 として表示されます）。</p>'
         )
 
     html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール ファイナル再生数ランキング</h1>")
