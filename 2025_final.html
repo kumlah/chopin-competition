@@ -8,6 +8,7 @@
     body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
            max-width: 1000px; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.6; }
     h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.3rem; margin-top: 2rem; margin-bottom: 0.5rem; }
     .meta { font-size: 0.9rem; color: #555; margin-bottom: 1rem; }
     .note { font-size: 0.9rem; margin-bottom: 1rem; }
     table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.9rem; }
@@ -26,7 +27,8 @@
 <body>
   <h1>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</h1>
   <div class="meta">集計日: 2025年11月15日(土) ／ 対象動画数: 11 本</div>
-  <div class="note">※ 2025_final.json をもとに自動生成されたランキングです。</div>
+  <div class="note">※ 2025_final.json をもとに自動生成された YouTube ランキングです。</div>
+  <h2>YouTube 再生数ランキング（決勝）</h2>
   <table>
     <thead>
       <tr>
@@ -43,14 +45,34 @@
       <!-- JavaScript で埋め込み -->
     </tbody>
   </table>
+  <h2>公式結果（ファイナル出場者一覧）</h2>
+  <div class="note small">※ competitors.json の内容をそのまま反映しています（最終順位のない人は順不同で表示）。</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:3em;">順位</th>
+        <th>名前</th>
+        <th style="width:10em;">国</th>
+        <th style="width:8em;">賞</th>
+        <th style="width:5em;">ファイナル</th>
+        <th style="width:4em;">第3</th>
+        <th style="width:4em;">第2</th>
+        <th style="width:4em;">第1</th>
+      </tr>
+    </thead>
+    <tbody id="competitors-body">
+      <!-- JavaScript で埋め込み -->
+    </tbody>
+  </table>
   <script>
     const videos = [{"videoId": "BOCTW4qyDqY", "url": "https://www.youtube.com/watch?v=BOCTW4qyDqY", "publishedAt": "2025-10-20T05:09:40Z", "title": "PIOTR ALEXEWICZ – final round (19th Chopin Competition, Warsaw)", "viewCount": 217068, "likeCount": 3919}, {"videoId": "_QgvXbaLFPs", "url": "https://www.youtube.com/watch?v=_QgvXbaLFPs", "publishedAt": "2025-10-20T21:34:03Z", "title": "KEVIN CHEN – final round (19th Chopin Competition, Warsaw)", "viewCount": 200267, "likeCount": 2696}, {"videoId": "QklhpTBNp3s", "url": "https://www.youtube.com/watch?v=QklhpTBNp3s", "publishedAt": "2025-10-20T21:29:39Z", "title": "DAVID KHRIKULI – final round (19th Chopin Competition, Warsaw)", "viewCount": 135191, "likeCount": 4588}, {"videoId": "8gphqTkmnR8", "url": "https://www.youtube.com/watch?v=8gphqTkmnR8", "publishedAt": "2025-10-20T23:54:39Z", "title": "SHIORI KUWAHARA – final round (19th Chopin Competition, Warsaw)", "viewCount": 511032, "likeCount": 9546}, {"videoId": "tYfpS1jt8ck", "url": "https://www.youtube.com/watch?v=tYfpS1jt8ck", "publishedAt": "2025-10-19T11:30:54Z", "title": "TIANYOU LI  – final round (19th Chopin Competition, Warsaw)", "viewCount": 60288, "likeCount": 1078}, {"videoId": "GFTHzzFA-TQ", "url": "https://www.youtube.com/watch?v=GFTHzzFA-TQ", "publishedAt": "2025-10-18T21:45:40Z", "title": "ERIC LU – final round (19th Chopin Competition, Warsaw)", "viewCount": 1046962, "likeCount": 15308}, {"videoId": "_G0TBsTYjvQ", "url": "https://www.youtube.com/watch?v=_G0TBsTYjvQ", "publishedAt": "2025-10-19T01:46:32Z", "title": "TIANYAO LYU – final round (19th Chopin Competition, Warsaw)", "viewCount": 741957, "likeCount": 13767}, {"videoId": "xsVgT3vtruM", "url": "https://www.youtube.com/watch?v=xsVgT3vtruM", "publishedAt": "2025-10-19T08:03:06Z", "title": "VINCENT ONG – final round (19th Chopin Competition, Warsaw)", "viewCount": 476648, "likeCount": 10395}, {"videoId": "1WdkvGV7sBY", "url": "https://www.youtube.com/watch?v=1WdkvGV7sBY", "publishedAt": "2025-10-19T21:06:00Z", "title": "MIYU SHINDO – final round (19th Chopin Competition, Warsaw)", "viewCount": 290767, "likeCount": 6297}, {"videoId": "omqTpiBXfnA", "url": "https://www.youtube.com/watch?v=omqTpiBXfnA", "publishedAt": "2025-10-19T20:03:02Z", "title": "ZITONG WANG – final round (19th Chopin Competition, Warsaw)", "viewCount": 184249, "likeCount": 2927}, {"videoId": "5duUDPKSrKk", "url": "https://www.youtube.com/watch?v=5duUDPKSrKk", "publishedAt": "2025-10-19T22:59:44Z", "title": "WILLIAM YANG – final round (19th Chopin Competition, Warsaw)", "viewCount": 93356, "likeCount": 1819}];
+    const competitors = [{"名前": "Eric Lu", "国": "United States of America", "最終順位": 1, "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "Kevin Chen", "国": "Canada", "最終順位": 2, "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "Zitong Wang", "国": "China", "最終順位": 3, "賞": "ソナタ賞", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "Shiori Kuwahara", "国": "Japan", "最終順位": 4, "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "Tianyao Lyu", "国": "China", "最終順位": 4, "賞": "コンチェルト賞", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "Piotr Alexewicz", "国": "Poland", "最終順位": 5, "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "Vincent Ong", "国": "Malaysia", "最終順位": 5, "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "William Yang", "国": "United States of America", "最終順位": 6, "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "David Khrikuli", "国": "Georgia", "最終順位": "", "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "Tianyou Li", "国": "China", "最終順位": "", "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}, {"名前": "Miyu Shindo", "国": "Japan", "最終順位": "", "賞": "", "ファイナル": "〇", "第3": "", "第2": "", "第1": ""}];
 
     function formatNumber(n) {
       return n.toLocaleString('ja-JP');
     }
 
-    function renderTable(list) {
+    function renderVideoTable(list) {
       const tbody = document.getElementById('ranking-body');
       tbody.innerHTML = '';
       list.forEach((v, index) => {
@@ -68,7 +90,7 @@
       });
     }
 
-    function sortAndRender(key, dir) {
+    function sortAndRenderVideos(key, dir) {
       const sorted = [...videos].sort((a, b) => {
         const va = a[key] ?? 0;
         const vb = b[key] ?? 0;
@@ -78,7 +100,7 @@
           return vb - va;
         }
       });
-      renderTable(sorted);
+      renderVideoTable(sorted);
     }
 
     function setupSortIcons() {
@@ -89,19 +111,58 @@
           const dir = icon.getAttribute('data-dir');
           icons.forEach(i => i.classList.remove('active'));
           icon.classList.add('active');
-          sortAndRender(key, dir);
+          sortAndRenderVideos(key, dir);
         });
       });
     }
 
-    // 初期表示: 再生回数 多い順（▼ をデフォルトアクティブ）
+    function renderCompetitorsTable(data) {
+      const tbody = document.getElementById('competitors-body');
+      tbody.innerHTML = '';
+
+      // 最終順位のある人を先に、無い人を後ろにする
+      const sorted = [...data].sort((a, b) => {
+        const aRankRaw = a['最終順位'];
+        const bRankRaw = b['最終順位'];
+        const aRank = parseInt(aRankRaw, 10);
+        const bRank = parseInt(bRankRaw, 10);
+        const aNaN = Number.isNaN(aRank);
+        const bNaN = Number.isNaN(bRank);
+        if (aNaN && bNaN) return 0;
+        if (aNaN) return 1;  // 順位なしは後ろ
+        if (bNaN) return -1;
+        return aRank - bRank;
+      });
+
+      sorted.forEach((c) => {
+        const rankRaw = c['最終順位'];
+        const rankText = (rankRaw === '' || rankRaw === null || typeof rankRaw === 'undefined')
+          ? '—'
+          : rankRaw;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank-col">${rankText}</td>
+          <td>${c['名前'] ?? ''}</td>
+          <td>${c['国'] ?? ''}</td>
+          <td>${c['賞'] ?? ''}</td>
+          <td>${c['ファイナル'] ?? ''}</td>
+          <td>${c['第3'] ?? ''}</td>
+          <td>${c['第2'] ?? ''}</td>
+          <td>${c['第1'] ?? ''}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 初期表示
     document.addEventListener('DOMContentLoaded', () => {
       setupSortIcons();
       const defaultIcon = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
       if (defaultIcon) {
         defaultIcon.classList.add('active');
       }
-      sortAndRender('viewCount', 'desc');
+      sortAndRenderVideos('viewCount', 'desc');
+      renderCompetitorsTable(competitors);
     });
   </script>
 </body>
