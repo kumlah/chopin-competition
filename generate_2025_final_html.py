@@ -79,6 +79,31 @@ def get_flag_filename(country):
     return mapping.get(country, "")
 
 
+def make_pianist_sort_key(name: str) -> str:
+    """
+    姓でソートするためのキーを作る。
+    ルール:
+      - スペース区切りで分割
+      - 最後の単語を姓とみなす
+      - ソートキーは 'lastname, other parts' の形（すべて小文字）
+    例:
+      'Frédéric Chopin'        -> 'chopin, frédéric'
+      'Anna Maria Kowalska'    -> 'kowalska, anna maria'
+      'Hyun Jin Kim'           -> 'kim, hyun jin'
+      'Chopin'                 -> 'chopin'
+    """
+    if not name:
+        return ""
+    parts = name.strip().split()
+    if not parts:
+        return ""
+    if len(parts) == 1:
+        return parts[0].lower()
+    last = parts[-1].lower()
+    rest = " ".join(parts[:-1]).lower()
+    return f"{last}, {rest}"
+
+
 def main():
     target_date, videos_raw = load_latest_videos()
     competitors_raw = load_competitors()
@@ -115,6 +140,8 @@ def main():
         prize = comp.get("賞", "") if comp else ""
         flag_file = get_flag_filename(country)
 
+        pianist_sort_key = make_pianist_sort_key(pianist)
+
         videos.append(
             {
                 "videoId": v.get("videoId", ""),
@@ -123,6 +150,7 @@ def main():
                 "viewCount": to_int_safe(v.get("viewCount")),
                 "likeCount": to_int_safe(v.get("likeCount")),
                 "pianist": pianist,
+                "pianistSortKey": pianist_sort_key,  # ★ 姓ソート用キー
                 "country": country,
                 "finalRank": final_rank,
                 "finalRankNum": final_rank_num,
@@ -168,16 +196,22 @@ def main():
 
     # このページ専用のテーブル用CSSだけ追加
     html.append("    <style>")
-    html.append("      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }")
+    html.append(
+        "      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }"
+    )
     html.append("      th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }")
     html.append("      th { background: #f0f0f0; }")
     html.append("      tbody tr:nth-child(even) { background: #fafafa; }")
     html.append("      .num-col { text-align: right; white-space: nowrap; }")
     html.append("      .rank-col { text-align: right; white-space: nowrap; }")
-    html.append("      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }")
+    html.append(
+        "      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }"
+    )
     html.append("      .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }")
     html.append("      .sort-icon.active { color: #000; font-weight: bold; }")
-    html.append("      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }")
+    html.append(
+        "      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }"
+    )
     html.append("    </style>")
 
     html.append("  </head>")
@@ -190,7 +224,7 @@ def main():
         '      <h1 class="project-name"><a href="/chopin-competition/" style="color:#fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a></h1>'
     )
     html.append(
-        "      <h2 class=\"project-tagline\">ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。順位と関係なく再生回数が伸びているコンテスタントの存在が気になってしまったのでまとめました🥰</h2>"
+        '      <h2 class="project-tagline">ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。順位と関係なく再生回数が伸びているコンテスタントの存在が気になってしまったのでまとめました🥰</h2>'
     )
     html.append("    </header>")
 
@@ -199,23 +233,22 @@ def main():
 
     if unmatched_count > 0:
         html.append(
-            f"      <p style=\"color:#777;font-size:0.85rem;\">※ {unmatched_count} 本は名前マッチできませんでした（名前・国・最終順位などが空欄になります）。</p>"
+            f'      <p style="color:#777;font-size:0.85rem;">※ {unmatched_count} 本は名前マッチできませんでした（名前・国・最終順位などが空欄になります）。</p>'
         )
 
     html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール ファイナル再生数ランキング</h1>")
     html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</p>")
 
-    
     # テーブル
     html.append("      <table>")
     html.append("        <thead>")
     html.append("          <tr>")
-    # 名前ソート
+    # 名前ソート（姓ソート用キー pianistSortKey を使う）
     html.append(
         "            <th>名前"
         "              <span class='sort-icons'>"
-        "                <span class='sort-icon' data-key='pianist' data-dir='asc' data-type='string'>▲</span>"
-        "                <span class='sort-icon' data-key='pianist' data-dir='desc' data-type='string'>▼</span>"
+        "                <span class='sort-icon' data-key='pianistSortKey' data-dir='asc' data-type='string'>▲</span>"
+        "                <span class='sort-icon' data-key='pianistSortKey' data-dir='desc' data-type='string'>▼</span>"
         "              </span>"
         "            </th>"
     )
