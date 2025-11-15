@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025第3ラウンド集計</title>
+    <meta name="description" content="ショパン国際ピアノコンクール2025第3ラウンドのYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css?v=76ba7eec5aa7918590041e6c94a14363f6b580e6">
+    <style>
+      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
+      th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }
+      th { background: #f0f0f0; }
+      tbody tr:nth-child(even) { background: #fafafa; }
+      .num-col { text-align: right; white-space: nowrap; }
+      .rank-col { text-align: right; white-space: nowrap; }
+      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }
+      .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }
+      .sort-icon.active { color: #000; font-weight: bold; }
+      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }
+      .thumb-img { width: 120px; aspect-ratio: 16/9; object-fit: cover; display: block; }
+    </style>
+  </head>
+  <body>
+    <a id="skip-to-content" href="#content">Skip to the content.</a>
+    <header class="page-header" role="banner">
+      <h1 class="project-name"><a href="/chopin-competition/" style="color:#fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a></h1>
+      <h2 class="project-tagline">ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。順位と関係なく再生回数が伸びているコンテスタントの存在が気になってしまったのでまとめました🥰</h2>
+    </header>
+    <main id="content" class="main-content" role="main">
+      <h1>第19回(2025)ショパン国際ピアノコンクール 第3ラウンド再生数ランキング</h1>
+      <p>集計日: 2025年11月15日(土) ／ 対象動画数: 0 本</p>
+      <table>
+        <thead>
+          <tr>
+            <th>名前              <span class='sort-icons'>                <span class='sort-icon' data-key='pianistSortKey' data-dir='asc' data-type='string'>▲</span>                <span class='sort-icon' data-key='pianistSortKey' data-dir='desc' data-type='string'>▼</span>              </span>            </th>
+            <th style='width:6em;'>国              <span class='sort-icons'>                <span class='sort-icon' data-key='country' data-dir='asc' data-type='string'>▲</span>                <span class='sort-icon' data-key='country' data-dir='desc' data-type='string'>▼</span>              </span>            </th>
+            <th style='width:8em;'>再生回数              <span class='sort-icons'>                <span class='sort-icon' data-key='viewCount' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='viewCount' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
+            <th style='width:8em;'>高評価数              <span class='sort-icons'>                <span class='sort-icon' data-key='likeCount' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='likeCount' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
+            <th style='width:6em;'>最終順位              <span class='sort-icons'>                <span class='sort-icon' data-key='finalRankNum' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='finalRankNum' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
+            <th style='width:11em;'>動画</th>
+          </tr>
+        </thead>
+        <tbody id='ranking-body'></tbody>
+      </table>
+      <footer class="site-footer">
+          <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>
+      </footer>
+    </main>
+    <script>
+const videos = [];
+
+function formatNumber(n){
+  if (n === null || n === undefined) return '';
+  return n.toLocaleString('ja-JP');
+}
+
+function renderTable(list){
+  const tbody = document.getElementById('ranking-body');
+  tbody.innerHTML = '';
+
+  list.forEach(v=>{
+    const finalRank = v.finalRank ? v.finalRank : '—';
+
+    let countryCellHtml = '';
+    if (v.flagPath){
+      // 国旗画像だけ表示。ソート用・意味付けとして alt/title に国名を入れる
+      countryCellHtml = `<img src="${v.flagPath}" alt="${v.country}" title="${v.country}" class="flag-icon">`;
+    } else {
+      // 国旗がない国は文字表示
+      const countryText = v.country || '';
+      countryCellHtml = countryText;
+    }
+
+    // サムネイルURL
+    const thumbUrl = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
+    const videoUrl  = v.url || `https://www.youtube.com/watch?v=${v.videoId}`;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${v.pianist || ''}</td>
+      <td>${countryCellHtml}</td>
+      <td class="num-col">${formatNumber(v.viewCount)}</td>
+      <td class="num-col">${formatNumber(v.likeCount)}</td>
+      <td class="rank-col">${finalRank}</td>
+      <td>
+        <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">
+          <img src="${thumbUrl}" alt="YouTube thumbnail" class="thumb-img">
+        </a>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function sortAndRender(key, dir, type){
+  const sorted = [...videos].sort((a,b)=>{
+    const va = a[key];
+    const vb = b[key];
+
+    if(type === 'number'){
+      const na = (typeof va === 'number') ? va : (parseFloat(va) || 0);
+      const nb = (typeof vb === 'number') ? vb : (parseFloat(vb) || 0);
+      return dir === 'asc' ? na - nb : nb - na;
+    } else {
+      const sa = (va ?? '').toString();
+      const sb = (vb ?? '').toString();
+      return dir === 'asc'
+        ? sa.localeCompare(sb, 'ja')
+        : sb.localeCompare(sa, 'ja');
+    }
+  });
+
+  renderTable(sorted);
+}
+
+function setupSortIcons(){
+  const icons = document.querySelectorAll('.sort-icon');
+  icons.forEach(icon=>{
+    icon.addEventListener('click',()=>{
+      const key = icon.getAttribute('data-key');
+      const dir = icon.getAttribute('data-dir');
+      const type = icon.getAttribute('data-type') || 'number';
+      icons.forEach(i=>i.classList.remove('active'));
+      icon.classList.add('active');
+      sortAndRender(key, dir, type);
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  setupSortIcons();
+  const defaultIcon = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
+  if(defaultIcon){
+    defaultIcon.classList.add('active');
+  }
+  sortAndRender('viewCount','desc','number');
+});
+
+    </script>
+  </body>
+</html>
