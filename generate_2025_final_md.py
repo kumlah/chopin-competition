@@ -53,20 +53,24 @@ def main():
         v["viewCount_int"] = to_int_safe(v.get("viewCount"))
         v["likeCount_int"] = to_int_safe(v.get("likeCount"))
 
+    # target_date は "2025-11-15" のような文字列で来るので整形する
+    try:
+        dt = datetime.fromisoformat(target_date)
+        target_date_jp = dt.strftime("%Y年%m月%d日")
+    except Exception:
+        # 万一フォーマットエラーの場合はそのまま
+        target_date_jp = target_date
+
     # 再生回数で降順ソート
     sorted_videos = sorted(videos, key=lambda x: x["viewCount_int"], reverse=True)
 
-    # タイムスタンプ（JST）
-    jst = timezone(timedelta(hours=9))
-    now_jst = datetime.now(jst).strftime("%Y-%m-%d %H:%M:%S")
 
     lines = []
 
     # 見出し
     lines.append("# ショパコン勝手にYouTube聴衆賞 2025 決勝集計")
     lines.append("")
-    lines.append(f"- 集計日: {target_date} 時点")
-    lines.append(f"- 最終更新（JST）: {now_jst}")
+    lines.append(f"- 集計日: {target_date_jp} 時点")
     lines.append(f"- 対象動画数: {len(sorted_videos)} 本")
     lines.append("")
     lines.append("※ 2025_final.json をもとに自動生成されたランキングです。")
