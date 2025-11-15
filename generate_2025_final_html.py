@@ -40,6 +40,7 @@ def load_latest_videos():
 def load_competitors():
     """
     competitors.json をそのまま読み込む。
+
     期待フォーマット（実データ）:
     [
       {
@@ -68,6 +69,25 @@ def load_competitors():
     return data
 
 
+def find_competitor_for_title(title: str, competitors: list[dict]) -> dict | None:
+    """
+    動画タイトルに含まれる名前（大文字小文字無視）を手がかりに competitor を1件返す。
+    最初にマッチしたものを採用。
+    """
+    if not title:
+        return None
+
+    title_lower = title.lower()
+    for comp in competitors:
+        name = comp.get("名前")
+        if not name:
+            continue
+        if name.lower() in title_lower:
+            return comp
+
+    return None
+
+
 def to_int_safe(value, default=0):
     try:
         return int(value)
@@ -87,26 +107,46 @@ def main():
     except Exception:
         target_date_jp = target_date
 
-    # JS に渡す用のクリーンな配列を作る（必要な項目だけ）
+    # JS に渡す用のクリーンな配列を作る
     videos = []
+    unmatched_count = 0
+
     for v in videos_raw:
+        title = v.get("title", "") or ""
+        comp = find_competitor_for_title(title, competitors_raw)
+
+        if comp is None:
+            unmatched_count += 1
+
+        # competitors.json 由来の情報（見つからなければ空文字）
+        pianist = comp.get("名前", "") if comp else ""
+        country = comp.get("国", "") if comp else ""
+        final_rank_raw = comp.get("最終順位", "") if comp else ""
+        # 最終順位は文字列として扱う（空なら "" のまま）
+        if final_rank_raw in (None, ""):
+            final_rank = ""
+        else:
+            final_rank = str(final_rank_raw)
+        prize = comp.get("賞", "") if comp else ""
+
         videos.append(
             {
                 "videoId": v.get("videoId", ""),
                 "url": v.get("url", ""),
                 "publishedAt": v.get("publishedAt", ""),
-                "title": v.get("title", ""),
+                "rawTitle": title,  # デバッグ・将来用（表には出さない）
                 "viewCount": to_int_safe(v.get("viewCount")),
                 "likeCount": to_int_safe(v.get("likeCount")),
+                "pianist": pianist,
+                "country": country,
+                "finalRank": final_rank,
+                "prize": prize,
             }
         )
 
     # JSON を埋め込む。"</script" 問題を避けるため軽くエスケープ
     videos_json = json.dumps(videos, ensure_ascii=False)
     videos_json_safe = videos_json.replace("</", "<\\/")
-
-    competitors_json = json.dumps(competitors_raw, ensure_ascii=False)
-    competitors_json_safe = competitors_json.replace("</", "<\\/")
 
     html_lines = []
 
@@ -121,7 +161,6 @@ def main():
     html_lines.append("    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;")
     html_lines.append("           max-width: 1000px; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.6; }")
     html_lines.append("    h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }")
-    html_lines.append("    h2 { font-size: 1.3rem; margin-top: 2rem; margin-bottom: 0.5rem; }")
     html_lines.append("    .meta { font-size: 0.9rem; color: #555; margin-bottom: 1rem; }")
     html_lines.append("    .note { font-size: 0.9rem; margin-bottom: 1rem; }")
     html_lines.append("    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.9rem; }")
@@ -139,16 +178,26 @@ def main():
     html_lines.append("</head>")
     html_lines.append("<body>")
     html_lines.append("  <h1>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</h1>")
-    html_lines.append(f"  <div class=\"meta\">集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</div>")
-    html_lines.append("  <div class=\"note\">※ 2025_final.json をもとに自動生成された YouTube ランキングです。</div>")
+    html_lines.append(
+        f"  <div class=\"meta\">集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</div>"
+    )
+    html_lines.append(
+        "  <div class=\"note\">※ 2025_final.json と competitors.json をもとに、動画タイトルに含まれる名前から自動的に出演者情報を紐づけています。</div>"
+    )
+    if unmatched_count > 0:
+        html_lines.append(
+            f"  <div class=\"note small\">※ 注意: {unmatched_count} 本の動画はタイトルから出演者名を特定できませんでした（名前・国・順位などが空欄になっています）。</div>"
+        )
 
-    # ① YouTube ランキングテーブル
-    html_lines.append("  <h2>YouTube 再生数ランキング（決勝）</h2>")
+    # テーブル本体（タイトル列は出さない）
     html_lines.append("  <table>")
     html_lines.append("    <thead>")
     html_lines.append("      <tr>")
     html_lines.append("        <th style=\"width:3em;\">順位</th>")
-    html_lines.append("        <th>ピアニスト / タイトル</th>")
+    html_lines.append("        <th>名前</th>")
+    html_lines.append("        <th style=\"width:10em;\">国</th>")
+    html_lines.append("        <th style=\"width:4em;\">最終順位</th>")
+    html_lines.append("        <th style=\"width:8em;\">賞</th>")
     html_lines.append("        <th style=\"width:8em;\">動画ID</th>")
     html_lines.append("        <th style=\"width:12em;\">投稿日 (UTC)</th>")
     html_lines.append(
@@ -175,45 +224,26 @@ def main():
     html_lines.append("    </tbody>")
     html_lines.append("  </table>")
 
-    # ② 公式結果テーブル（competitors.json）
-    html_lines.append("  <h2>公式結果（ファイナル出場者一覧）</h2>")
-    html_lines.append("  <div class=\"note small\">※ competitors.json の内容をそのまま反映しています（最終順位のない人は順不同で表示）。</div>")
-    html_lines.append("  <table>")
-    html_lines.append("    <thead>")
-    html_lines.append("      <tr>")
-    html_lines.append("        <th style=\"width:3em;\">順位</th>")
-    html_lines.append("        <th>名前</th>")
-    html_lines.append("        <th style=\"width:10em;\">国</th>")
-    html_lines.append("        <th style=\"width:8em;\">賞</th>")
-    html_lines.append("        <th style=\"width:5em;\">ファイナル</th>")
-    html_lines.append("        <th style=\"width:4em;\">第3</th>")
-    html_lines.append("        <th style=\"width:4em;\">第2</th>")
-    html_lines.append("        <th style=\"width:4em;\">第1</th>")
-    html_lines.append("      </tr>")
-    html_lines.append("    </thead>")
-    html_lines.append("    <tbody id=\"competitors-body\">")
-    html_lines.append("      <!-- JavaScript で埋め込み -->")
-    html_lines.append("    </tbody>")
-    html_lines.append("  </table>")
-
     # データとスクリプト
     html_lines.append("  <script>")
     html_lines.append(f"    const videos = {videos_json_safe};")
-    html_lines.append(f"    const competitors = {competitors_json_safe};")
     html_lines.append("")
     html_lines.append("    function formatNumber(n) {")
     html_lines.append("      return n.toLocaleString('ja-JP');")
     html_lines.append("    }")
     html_lines.append("")
-    # YouTube ランキング描画
-    html_lines.append("    function renderVideoTable(list) {")
+    html_lines.append("    function renderTable(list) {")
     html_lines.append("      const tbody = document.getElementById('ranking-body');")
     html_lines.append("      tbody.innerHTML = '';")
     html_lines.append("      list.forEach((v, index) => {")
+    html_lines.append("        const finalRank = v.finalRank && v.finalRank !== '' ? v.finalRank : '—';")
     html_lines.append("        const tr = document.createElement('tr');")
     html_lines.append("        tr.innerHTML = `")
     html_lines.append("          <td class=\"rank-col\">${index + 1}</td>")
-    html_lines.append("          <td>${v.title}</td>")
+    html_lines.append("          <td>${v.pianist || ''}</td>")
+    html_lines.append("          <td>${v.country || ''}</td>")
+    html_lines.append("          <td class=\"rank-col\">${finalRank}</td>")
+    html_lines.append("          <td>${v.prize || ''}</td>")
     html_lines.append("          <td><code>${v.videoId}</code></td>")
     html_lines.append("          <td>${v.publishedAt}</td>")
     html_lines.append("          <td class=\"num-col\">${formatNumber(v.viewCount)}</td>")
@@ -224,7 +254,7 @@ def main():
     html_lines.append("      });")
     html_lines.append("    }")
     html_lines.append("")
-    html_lines.append("    function sortAndRenderVideos(key, dir) {")
+    html_lines.append("    function sortAndRender(key, dir) {")
     html_lines.append("      const sorted = [...videos].sort((a, b) => {")
     html_lines.append("        const va = a[key] ?? 0;")
     html_lines.append("        const vb = b[key] ?? 0;")
@@ -234,7 +264,7 @@ def main():
     html_lines.append("          return vb - va;")
     html_lines.append("        }")
     html_lines.append("      });")
-    html_lines.append("      renderVideoTable(sorted);")
+    html_lines.append("      renderTable(sorted);")
     html_lines.append("    }")
     html_lines.append("")
     html_lines.append("    function setupSortIcons() {")
@@ -245,59 +275,19 @@ def main():
     html_lines.append("          const dir = icon.getAttribute('data-dir');")
     html_lines.append("          icons.forEach(i => i.classList.remove('active'));")
     html_lines.append("          icon.classList.add('active');")
-    html_lines.append("          sortAndRenderVideos(key, dir);")
+    html_lines.append("          sortAndRender(key, dir);")
     html_lines.append("        });")
     html_lines.append("      });")
     html_lines.append("    }")
     html_lines.append("")
-    # competitors.json テーブル描画
-    html_lines.append("    function renderCompetitorsTable(data) {")
-    html_lines.append("      const tbody = document.getElementById('competitors-body');")
-    html_lines.append("      tbody.innerHTML = '';")
-    html_lines.append("")
-    html_lines.append("      // 最終順位のある人を先に、無い人を後ろにする")
-    html_lines.append("      const sorted = [...data].sort((a, b) => {")
-    html_lines.append("        const aRankRaw = a['最終順位'];")
-    html_lines.append("        const bRankRaw = b['最終順位'];")
-    html_lines.append("        const aRank = parseInt(aRankRaw, 10);")
-    html_lines.append("        const bRank = parseInt(bRankRaw, 10);")
-    html_lines.append("        const aNaN = Number.isNaN(aRank);")
-    html_lines.append("        const bNaN = Number.isNaN(bRank);")
-    html_lines.append("        if (aNaN && bNaN) return 0;")
-    html_lines.append("        if (aNaN) return 1;  // 順位なしは後ろ")
-    html_lines.append("        if (bNaN) return -1;")
-    html_lines.append("        return aRank - bRank;")
-    html_lines.append("      });")
-    html_lines.append("")
-    html_lines.append("      sorted.forEach((c) => {")
-    html_lines.append("        const rankRaw = c['最終順位'];")
-    html_lines.append("        const rankText = (rankRaw === '' || rankRaw === null || typeof rankRaw === 'undefined')")
-    html_lines.append("          ? '—'")
-    html_lines.append("          : rankRaw;")
-    html_lines.append("        const tr = document.createElement('tr');")
-    html_lines.append("        tr.innerHTML = `")
-    html_lines.append("          <td class=\"rank-col\">${rankText}</td>")
-    html_lines.append("          <td>${c['名前'] ?? ''}</td>")
-    html_lines.append("          <td>${c['国'] ?? ''}</td>")
-    html_lines.append("          <td>${c['賞'] ?? ''}</td>")
-    html_lines.append("          <td>${c['ファイナル'] ?? ''}</td>")
-    html_lines.append("          <td>${c['第3'] ?? ''}</td>")
-    html_lines.append("          <td>${c['第2'] ?? ''}</td>")
-    html_lines.append("          <td>${c['第1'] ?? ''}</td>")
-    html_lines.append("        `;")
-    html_lines.append("        tbody.appendChild(tr);")
-    html_lines.append("      });")
-    html_lines.append("    }")
-    html_lines.append("")
-    html_lines.append("    // 初期表示")
+    html_lines.append("    // 初期表示: 再生回数 多い順（▼ をデフォルトアクティブ）")
     html_lines.append("    document.addEventListener('DOMContentLoaded', () => {")
     html_lines.append("      setupSortIcons();")
     html_lines.append("      const defaultIcon = document.querySelector('.sort-icon[data-key=\"viewCount\"][data-dir=\"desc\"]');")
     html_lines.append("      if (defaultIcon) {")
     html_lines.append("        defaultIcon.classList.add('active');")
     html_lines.append("      }")
-    html_lines.append("      sortAndRenderVideos('viewCount', 'desc');")
-    html_lines.append("      renderCompetitorsTable(competitors);")
+    html_lines.append("      sortAndRender('viewCount', 'desc');")
     html_lines.append("    });")
     html_lines.append("  </script>")
     html_lines.append("</body>")
