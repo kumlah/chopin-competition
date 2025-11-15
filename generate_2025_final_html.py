@@ -204,5 +204,5 @@ def main():
     print(f"{HTML_PATH} を更新しました。")
 
 
-if __name__ == \"__main__\":
+if __name__ == "__main__":
     main()
