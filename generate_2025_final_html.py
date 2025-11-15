@@ -83,7 +83,7 @@ def main():
     target_date, videos_raw = load_latest_videos()
     competitors_raw = load_competitors()
 
-    # 日付を "YYYY年MM月DD日(曜)" に
+    # 日付を "YYYY年MM月DD日(曜)" に整形
     try:
         dt = datetime.fromisoformat(target_date)
         weekday_ja = "月火水木金土日"[dt.weekday()]
@@ -137,99 +137,147 @@ def main():
 
     html = []
 
+    # ───── DOCTYPE & <html> ─────
     html.append("<!DOCTYPE html>")
-    html.append("<html lang=\"ja\">")
-    html.append("<head>")
-    html.append("  <meta charset=\"UTF-8\">")
-    html.append("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
-    html.append("  <title>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</title>")
+    html.append('<html lang="en-US">')
+    html.append("  <head>")
+    html.append('    <meta charset="UTF-8">')
 
-    # CSS
-    html.append("  <style>")
-    html.append("    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.6; }")
-    html.append("    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }")
-    html.append("    th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }")
-    html.append("    th { background: #f0f0f0; }")
-    html.append("    tbody tr:nth-child(even) { background: #fafafa; }")
-    html.append("    .num-col { text-align: right; white-space: nowrap; }")
-    html.append("    .rank-col { text-align: right; white-space: nowrap; }")
-    html.append("    .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }")
-    html.append("    .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }")
-    html.append("    .sort-icon.active { color: #000; font-weight: bold; }")
-    html.append("    .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }")
-    html.append("  </style>")
-    html.append("</head>")
-    html.append("<body>")
+    # 最低限のタイトル＆descriptionだけ自前で付ける（見た目はCSSで揃う）
+    html.append(
+        "    <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025ファイナル集計</title>"
+    )
+    html.append(
+        '    <meta name="description" content="ショパン国際ピアノコンクール2025ファイナルのYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。">'
+    )
 
-    html.append("  <h1>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</h1>")
-    html.append(f"  <div>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</div>")
-    html.append("  <div style='font-size:0.9rem; margin-bottom:0.5rem;'>※ 2025_final.json と competitors.json をもとに、動画タイトルに含まれる名前から自動的に出演者情報を紐づけています。</div>")
+    # index.html と同じフォント・テーマ・CSS
+    html.append('    <link rel="preconnect" href="https://fonts.gstatic.com">')
+    html.append(
+        '    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>'
+    )
+    html.append('    <meta name="viewport" content="width=device-width, initial-scale=1">')
+    html.append('    <meta name="theme-color" content="#157878">')
+    html.append(
+        '    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">'
+    )
+    # ★ ここは index.html の link をそのままコピペ（見た目を完全に揃えるため）
+    html.append(
+        '    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css?v=76ba7eec5aa7918590041e6c94a14363f6b580e6">'
+    )
+
+    # このページ専用のテーブル用CSSだけ追加
+    html.append("    <style>")
+    html.append("      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }")
+    html.append("      th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }")
+    html.append("      th { background: #f0f0f0; }")
+    html.append("      tbody tr:nth-child(even) { background: #fafafa; }")
+    html.append("      .num-col { text-align: right; white-space: nowrap; }")
+    html.append("      .rank-col { text-align: right; white-space: nowrap; }")
+    html.append("      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }")
+    html.append("      .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }")
+    html.append("      .sort-icon.active { color: #000; font-weight: bold; }")
+    html.append("      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }")
+    html.append("    </style>")
+
+    html.append("  </head>")
+    html.append("  <body>")
+
+    # ───── index.html と同じヘッダー ─────
+    html.append('    <a id="skip-to-content" href="#content">Skip to the content.</a>')
+    html.append('    <header class="page-header" role="banner">')
+    html.append(
+        '      <h1 class="project-name"><a href="/chopin-competition/" style="color:#fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a></h1>'
+    )
+    html.append(
+        "      <h2 class=\"project-tagline\">ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。順位と関係なく再生回数が伸びているコンテスタントの存在が気になってしまったのでまとめました🥰</h2>"
+    )
+    html.append("    </header>")
+
+    # ───── メインコンテンツ ─────
+    html.append('    <main id="content" class="main-content" role="main">')
+
+    # ページ説明
+    html.append("      <p>このページは第19回(2025)ショパン国際ピアノコンクール・ファイナルの公式YouTube配信について、再生回数と高評価数を個人的に集計した非公式メモです。</p>")
+    html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</p>")
+    html.append(
+        "      <p style=\"font-size:0.9rem; margin-bottom:0.5rem;\">※ 2025_final.json と competitors.json をもとに、動画タイトルに含まれる名前から自動的に出演者情報を紐づけています。</p>"
+    )
     if unmatched_count > 0:
         html.append(
-            f"  <div style='color:#777;font-size:0.85rem;'>※ {unmatched_count} 本は名前マッチできませんでした（名前・国・最終順位などが空欄になります）。</div>"
+            f"      <p style=\"color:#777;font-size:0.85rem;\">※ {unmatched_count} 本は名前マッチできませんでした（名前・国・最終順位などが空欄になります）。</p>"
         )
 
-    # テーブルヘッダー
-    html.append("  <table>")
-    html.append("    <thead>")
-    html.append("      <tr>")
+    html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール ファイナル再生数ランキング</h1>")
+
+    # テーブル
+    html.append("      <table>")
+    html.append("        <thead>")
+    html.append("          <tr>")
     # 名前ソート
     html.append(
-        "        <th>名前"
-        "          <span class='sort-icons'>"
-        "            <span class='sort-icon' data-key='pianist' data-dir='asc' data-type='string'>▲</span>"
-        "            <span class='sort-icon' data-key='pianist' data-dir='desc' data-type='string'>▼</span>"
-        "          </span>"
-        "        </th>"
+        "            <th>名前"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='pianist' data-dir='asc' data-type='string'>▲</span>"
+        "                <span class='sort-icon' data-key='pianist' data-dir='desc' data-type='string'>▼</span>"
+        "              </span>"
+        "            </th>"
     )
-    # 国（国旗だけ表示だが country 文字列でソート）
+    # 国（国旗のみ表示・ソートはcountry文字列）
     html.append(
-        "        <th style='width:6em;'>国"
-        "          <span class='sort-icons'>"
-        "            <span class='sort-icon' data-key='country' data-dir='asc' data-type='string'>▲</span>"
-        "            <span class='sort-icon' data-key='country' data-dir='desc' data-type='string'>▼</span>"
-        "          </span>"
-        "        </th>"
+        "            <th style='width:6em;'>国"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='country' data-dir='asc' data-type='string'>▲</span>"
+        "                <span class='sort-icon' data-key='country' data-dir='desc' data-type='string'>▼</span>"
+        "              </span>"
+        "            </th>"
     )
     # 再生回数
     html.append(
-        "        <th style='width:8em;'>再生回数"
-        "          <span class='sort-icons'>"
-        "            <span class='sort-icon' data-key='viewCount' data-dir='asc' data-type='number'>▲</span>"
-        "            <span class='sort-icon' data-key='viewCount' data-dir='desc' data-type='number'>▼</span>"
-        "          </span>"
-        "        </th>"
+        "            <th style='width:8em;'>再生回数"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='viewCount' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='viewCount' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
     )
     # 高評価数
     html.append(
-        "        <th style='width:8em;'>高評価数"
-        "          <span class='sort-icons'>"
-        "            <span class='sort-icon' data-key='likeCount' data-dir='asc' data-type='number'>▲</span>"
-        "            <span class='sort-icon' data-key='likeCount' data-dir='desc' data-type='number'>▼</span>"
-        "          </span>"
-        "        </th>"
+        "            <th style='width:8em;'>高評価数"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='likeCount' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='likeCount' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
     )
     # 最終順位
     html.append(
-        "        <th style='width:6em;'>最終順位"
-        "          <span class='sort-icons'>"
-        "            <span class='sort-icon' data-key='finalRankNum' data-dir='asc' data-type='number'>▲</span>"
-        "            <span class='sort-icon' data-key='finalRankNum' data-dir='desc' data-type='number'>▼</span>"
-        "          </span>"
-        "        </th>"
+        "            <th style='width:6em;'>最終順位"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='finalRankNum' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='finalRankNum' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
     )
-    html.append("        <th style='width:5em;'>URL</th>")
-    html.append("      </tr>")
-    html.append("    </thead>")
-    html.append("    <tbody id='ranking-body'></tbody>")
-    html.append("  </table>")
+    html.append("            <th style='width:5em;'>URL</th>")
+    html.append("          </tr>")
+    html.append("        </thead>")
+    html.append("        <tbody id='ranking-body'></tbody>")
+    html.append("      </table>")
 
-    # JS
-    html.append("  <script>")
+    # ───── フッター（index.html と同じ） ─────
+    html.append('      <footer class="site-footer">')
+    html.append('          <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>')
+    html.append("      </footer>")
+
+    html.append("    </main>")
+
+    # ───── JS ─────
+    html.append("    <script>")
     html.append(f"const videos = {videos_json_safe};")
 
     html.append(
-        """
+        r"""
 function formatNumber(n){
   return n.toLocaleString('ja-JP');
 }
@@ -310,8 +358,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
 """
     )
 
-    html.append("  </script>")
-    html.append("</body>")
+    html.append("    </script>")
+    html.append("  </body>")
     html.append("</html>")
 
     HTML_PATH.write_text("\n".join(html), encoding="utf-8")
