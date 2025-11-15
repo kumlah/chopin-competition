@@ -197,19 +197,15 @@ def main():
     # ───── メインコンテンツ ─────
     html.append('    <main id="content" class="main-content" role="main">')
 
-    # ページ説明
-    html.append("      <p>このページは第19回(2025)ショパン国際ピアノコンクール・ファイナルの公式YouTube配信について、再生回数と高評価数を個人的に集計した非公式メモです。</p>")
-    html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</p>")
-    html.append(
-        "      <p style=\"font-size:0.9rem; margin-bottom:0.5rem;\">※ 2025_final.json と competitors.json をもとに、動画タイトルに含まれる名前から自動的に出演者情報を紐づけています。</p>"
-    )
     if unmatched_count > 0:
         html.append(
             f"      <p style=\"color:#777;font-size:0.85rem;\">※ {unmatched_count} 本は名前マッチできませんでした（名前・国・最終順位などが空欄になります）。</p>"
         )
 
     html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール ファイナル再生数ランキング</h1>")
+    html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</p>")
 
+    
     # テーブル
     html.append("      <table>")
     html.append("        <thead>")
