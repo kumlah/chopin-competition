@@ -272,7 +272,7 @@ def main():
     html_lines.append("      sorted.forEach((c) => {")
     html_lines.append("        const rankRaw = c['最終順位'];")
     html_lines.append("        const rankText = (rankRaw === '' || rankRaw === null || typeof rankRaw === 'undefined')")
-    html_lines.append("          ? '—'"
+    html_lines.append("          ? '—'")
     html_lines.append("          : rankRaw;")
     html_lines.append("        const tr = document.createElement('tr');")
     html_lines.append("        tr.innerHTML = `")
