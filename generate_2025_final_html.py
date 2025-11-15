@@ -53,10 +53,6 @@ def main():
     except Exception:
         target_date_jp = target_date
 
-    # JST の最終更新時刻
-    jst = timezone(timedelta(hours=9))
-    now_jst = datetime.now(jst).strftime("%Y年%m月%d日 %H:%M:%S")
-
     # JS に渡す用のクリーンな配列を作る（必要な項目だけ）
     videos = []
     for v in videos_raw:
@@ -105,8 +101,7 @@ def main():
     html_lines.append("</head>")
     html_lines.append("<body>")
     html_lines.append("  <h1>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</h1>")
-    html_lines.append(f"  <div class=\"meta\">集計日: {target_date_jp} ／ 最終更新（JST）: {now_jst} ／ 対象動画数: {len(videos)} 本</div>")
-    html_lines.append("  <div class=\"note\">※ 2025_final.json をもとに自動生成されたランキングです。</div>")
+    html_lines.append(f"  <div class=\"meta\">集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</div>")
 
     # 並べ替えボタン
     html_lines.append("  <div class=\"controls\">")
