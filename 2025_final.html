@@ -5,103 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</title>
   <style>
-    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-           max-width: 1000px; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.6; }
-    h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }
-    .meta { font-size: 0.9rem; color: #555; margin-bottom: 1rem; }
-    .note { font-size: 0.9rem; margin-bottom: 1rem; }
-    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.9rem; }
+    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 1.5rem auto; padding: 0 1rem; line-height: 1.6; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
     th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }
     th { background: #f0f0f0; }
     tbody tr:nth-child(even) { background: #fafafa; }
-    code { font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
-    .rank-col { text-align: right; }
     .num-col { text-align: right; white-space: nowrap; }
-    .small { font-size: 0.8rem; color: #777; }
-    .sort-icons { margin-left: 0.25rem; white-space: nowrap; font-size: 0.75rem; }
+    .rank-col { text-align: right; white-space: nowrap; }
+    .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }
     .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }
     .sort-icon.active { color: #000; font-weight: bold; }
+    .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }
   </style>
 </head>
 <body>
   <h1>ショパコン勝手にYouTube聴衆賞 2025 決勝集計</h1>
-  <div class="meta">集計日: 2025年11月15日(土) ／ 対象動画数: 11 本</div>
-  <div class="note">※ 2025_final.json と competitors.json をもとに、動画タイトルに含まれる名前から自動的に出演者情報を紐づけています。</div>
+  <div>集計日: 2025年11月15日(土) ／ 対象動画数: 11 本</div>
+  <div style='font-size:0.9rem; margin-bottom:0.5rem;'>※ 2025_final.json と competitors.json をもとに、動画タイトルに含まれる名前から自動的に出演者情報を紐づけています。</div>
   <table>
     <thead>
       <tr>
-        <th>名前</th>
-        <th style="width:10em;">国</th>
-        <th style="width:8em;">再生回数          <span class="sort-icons">            <span class="sort-icon" data-key="viewCount" data-dir="asc" title="再生回数 少ない順">▲</span>            <span class="sort-icon" data-key="viewCount" data-dir="desc" title="再生回数 多い順">▼</span>          </span>        </th>
-        <th style="width:8em;">高評価数          <span class="sort-icons">            <span class="sort-icon" data-key="likeCount" data-dir="asc" title="高評価 少ない順">▲</span>            <span class="sort-icon" data-key="likeCount" data-dir="desc" title="高評価 多い順">▼</span>          </span>        </th>
-        <th style="width:6em;">最終順位          <span class="sort-icons">            <span class="sort-icon" data-key="finalRankNum" data-dir="asc" title="最終順位 昇順">▲</span>            <span class="sort-icon" data-key="finalRankNum" data-dir="desc" title="最終順位 降順">▼</span>          </span>        </th>
-        <th style="width:5em;">URL</th>
+        <th>名前          <span class='sort-icons'>            <span class='sort-icon' data-key='pianist' data-dir='asc' data-type='string'>▲</span>            <span class='sort-icon' data-key='pianist' data-dir='desc' data-type='string'>▼</span>          </span>        </th>
+        <th style='width:6em;'>国          <span class='sort-icons'>            <span class='sort-icon' data-key='country' data-dir='asc' data-type='string'>▲</span>            <span class='sort-icon' data-key='country' data-dir='desc' data-type='string'>▼</span>          </span>        </th>
+        <th style='width:8em;'>再生回数          <span class='sort-icons'>            <span class='sort-icon' data-key='viewCount' data-dir='asc' data-type='number'>▲</span>            <span class='sort-icon' data-key='viewCount' data-dir='desc' data-type='number'>▼</span>          </span>        </th>
+        <th style='width:8em;'>高評価数          <span class='sort-icons'>            <span class='sort-icon' data-key='likeCount' data-dir='asc' data-type='number'>▲</span>            <span class='sort-icon' data-key='likeCount' data-dir='desc' data-type='number'>▼</span>          </span>        </th>
+        <th style='width:6em;'>最終順位          <span class='sort-icons'>            <span class='sort-icon' data-key='finalRankNum' data-dir='asc' data-type='number'>▲</span>            <span class='sort-icon' data-key='finalRankNum' data-dir='desc' data-type='number'>▼</span>          </span>        </th>
+        <th style='width:5em;'>URL</th>
       </tr>
     </thead>
-    <tbody id="ranking-body">
-      <!-- JavaScript で埋め込み -->
-    </tbody>
+    <tbody id='ranking-body'></tbody>
   </table>
   <script>
-    const videos = [{"videoId": "BOCTW4qyDqY", "url": "https://www.youtube.com/watch?v=BOCTW4qyDqY", "publishedAt": "2025-10-20T05:09:40Z", "rawTitle": "PIOTR ALEXEWICZ – final round (19th Chopin Competition, Warsaw)", "viewCount": 217068, "likeCount": 3919, "pianist": "Piotr Alexewicz", "country": "Poland", "finalRank": "5", "finalRankNum": 5, "prize": ""}, {"videoId": "_QgvXbaLFPs", "url": "https://www.youtube.com/watch?v=_QgvXbaLFPs", "publishedAt": "2025-10-20T21:34:03Z", "rawTitle": "KEVIN CHEN – final round (19th Chopin Competition, Warsaw)", "viewCount": 200267, "likeCount": 2696, "pianist": "Kevin Chen", "country": "Canada", "finalRank": "2", "finalRankNum": 2, "prize": ""}, {"videoId": "QklhpTBNp3s", "url": "https://www.youtube.com/watch?v=QklhpTBNp3s", "publishedAt": "2025-10-20T21:29:39Z", "rawTitle": "DAVID KHRIKULI – final round (19th Chopin Competition, Warsaw)", "viewCount": 135191, "likeCount": 4588, "pianist": "David Khrikuli", "country": "Georgia", "finalRank": "", "finalRankNum": 999, "prize": ""}, {"videoId": "8gphqTkmnR8", "url": "https://www.youtube.com/watch?v=8gphqTkmnR8", "publishedAt": "2025-10-20T23:54:39Z", "rawTitle": "SHIORI KUWAHARA – final round (19th Chopin Competition, Warsaw)", "viewCount": 511032, "likeCount": 9546, "pianist": "Shiori Kuwahara", "country": "Japan", "finalRank": "4", "finalRankNum": 4, "prize": ""}, {"videoId": "tYfpS1jt8ck", "url": "https://www.youtube.com/watch?v=tYfpS1jt8ck", "publishedAt": "2025-10-19T11:30:54Z", "rawTitle": "TIANYOU LI  – final round (19th Chopin Competition, Warsaw)", "viewCount": 60288, "likeCount": 1078, "pianist": "Tianyou Li", "country": "China", "finalRank": "", "finalRankNum": 999, "prize": ""}, {"videoId": "GFTHzzFA-TQ", "url": "https://www.youtube.com/watch?v=GFTHzzFA-TQ", "publishedAt": "2025-10-18T21:45:40Z", "rawTitle": "ERIC LU – final round (19th Chopin Competition, Warsaw)", "viewCount": 1046962, "likeCount": 15308, "pianist": "Eric Lu", "country": "United States of America", "finalRank": "1", "finalRankNum": 1, "prize": ""}, {"videoId": "_G0TBsTYjvQ", "url": "https://www.youtube.com/watch?v=_G0TBsTYjvQ", "publishedAt": "2025-10-19T01:46:32Z", "rawTitle": "TIANYAO LYU – final round (19th Chopin Competition, Warsaw)", "viewCount": 741957, "likeCount": 13767, "pianist": "Tianyao Lyu", "country": "China", "finalRank": "4", "finalRankNum": 4, "prize": "コンチェルト賞"}, {"videoId": "xsVgT3vtruM", "url": "https://www.youtube.com/watch?v=xsVgT3vtruM", "publishedAt": "2025-10-19T08:03:06Z", "rawTitle": "VINCENT ONG – final round (19th Chopin Competition, Warsaw)", "viewCount": 476648, "likeCount": 10395, "pianist": "Vincent Ong", "country": "Malaysia", "finalRank": "5", "finalRankNum": 5, "prize": ""}, {"videoId": "1WdkvGV7sBY", "url": "https://www.youtube.com/watch?v=1WdkvGV7sBY", "publishedAt": "2025-10-19T21:06:00Z", "rawTitle": "MIYU SHINDO – final round (19th Chopin Competition, Warsaw)", "viewCount": 290767, "likeCount": 6297, "pianist": "Miyu Shindo", "country": "Japan", "finalRank": "", "finalRankNum": 999, "prize": ""}, {"videoId": "omqTpiBXfnA", "url": "https://www.youtube.com/watch?v=omqTpiBXfnA", "publishedAt": "2025-10-19T20:03:02Z", "rawTitle": "ZITONG WANG – final round (19th Chopin Competition, Warsaw)", "viewCount": 184249, "likeCount": 2927, "pianist": "Zitong Wang", "country": "China", "finalRank": "3", "finalRankNum": 3, "prize": "ソナタ賞"}, {"videoId": "5duUDPKSrKk", "url": "https://www.youtube.com/watch?v=5duUDPKSrKk", "publishedAt": "2025-10-19T22:59:44Z", "rawTitle": "WILLIAM YANG – final round (19th Chopin Competition, Warsaw)", "viewCount": 93356, "likeCount": 1819, "pianist": "William Yang", "country": "United States of America", "finalRank": "6", "finalRankNum": 6, "prize": ""}];
+const videos = [{"videoId": "BOCTW4qyDqY", "url": "https://www.youtube.com/watch?v=BOCTW4qyDqY", "publishedAt": "2025-10-20T05:09:40Z", "viewCount": 217068, "likeCount": 3919, "pianist": "Piotr Alexewicz", "country": "Poland", "finalRank": "5", "finalRankNum": 5, "prize": "", "flagPath": "img/flag/poland.png"}, {"videoId": "_QgvXbaLFPs", "url": "https://www.youtube.com/watch?v=_QgvXbaLFPs", "publishedAt": "2025-10-20T21:34:03Z", "viewCount": 200267, "likeCount": 2696, "pianist": "Kevin Chen", "country": "Canada", "finalRank": "2", "finalRankNum": 2, "prize": "", "flagPath": "img/flag/canada.png"}, {"videoId": "QklhpTBNp3s", "url": "https://www.youtube.com/watch?v=QklhpTBNp3s", "publishedAt": "2025-10-20T21:29:39Z", "viewCount": 135191, "likeCount": 4588, "pianist": "David Khrikuli", "country": "Georgia", "finalRank": "", "finalRankNum": 999, "prize": "", "flagPath": "img/flag/georgia.png"}, {"videoId": "8gphqTkmnR8", "url": "https://www.youtube.com/watch?v=8gphqTkmnR8", "publishedAt": "2025-10-20T23:54:39Z", "viewCount": 511032, "likeCount": 9546, "pianist": "Shiori Kuwahara", "country": "Japan", "finalRank": "4", "finalRankNum": 4, "prize": "", "flagPath": "img/flag/japan.png"}, {"videoId": "tYfpS1jt8ck", "url": "https://www.youtube.com/watch?v=tYfpS1jt8ck", "publishedAt": "2025-10-19T11:30:54Z", "viewCount": 60288, "likeCount": 1078, "pianist": "Tianyou Li", "country": "China", "finalRank": "", "finalRankNum": 999, "prize": "", "flagPath": "img/flag/china.png"}, {"videoId": "GFTHzzFA-TQ", "url": "https://www.youtube.com/watch?v=GFTHzzFA-TQ", "publishedAt": "2025-10-18T21:45:40Z", "viewCount": 1046962, "likeCount": 15308, "pianist": "Eric Lu", "country": "United States of America", "finalRank": "1", "finalRankNum": 1, "prize": "", "flagPath": "img/flag/usa.png"}, {"videoId": "_G0TBsTYjvQ", "url": "https://www.youtube.com/watch?v=_G0TBsTYjvQ", "publishedAt": "2025-10-19T01:46:32Z", "viewCount": 741957, "likeCount": 13767, "pianist": "Tianyao Lyu", "country": "China", "finalRank": "4", "finalRankNum": 4, "prize": "コンチェルト賞", "flagPath": "img/flag/china.png"}, {"videoId": "xsVgT3vtruM", "url": "https://www.youtube.com/watch?v=xsVgT3vtruM", "publishedAt": "2025-10-19T08:03:06Z", "viewCount": 476648, "likeCount": 10395, "pianist": "Vincent Ong", "country": "Malaysia", "finalRank": "5", "finalRankNum": 5, "prize": "", "flagPath": "img/flag/malaysia.png"}, {"videoId": "1WdkvGV7sBY", "url": "https://www.youtube.com/watch?v=1WdkvGV7sBY", "publishedAt": "2025-10-19T21:06:00Z", "viewCount": 290767, "likeCount": 6297, "pianist": "Miyu Shindo", "country": "Japan", "finalRank": "", "finalRankNum": 999, "prize": "", "flagPath": "img/flag/japan.png"}, {"videoId": "omqTpiBXfnA", "url": "https://www.youtube.com/watch?v=omqTpiBXfnA", "publishedAt": "2025-10-19T20:03:02Z", "viewCount": 184249, "likeCount": 2927, "pianist": "Zitong Wang", "country": "China", "finalRank": "3", "finalRankNum": 3, "prize": "ソナタ賞", "flagPath": "img/flag/china.png"}, {"videoId": "5duUDPKSrKk", "url": "https://www.youtube.com/watch?v=5duUDPKSrKk", "publishedAt": "2025-10-19T22:59:44Z", "viewCount": 93356, "likeCount": 1819, "pianist": "William Yang", "country": "United States of America", "finalRank": "6", "finalRankNum": 6, "prize": "", "flagPath": "img/flag/usa.png"}];
 
-    function formatNumber(n) {
-      return n.toLocaleString('ja-JP');
+function formatNumber(n){
+  return n.toLocaleString('ja-JP');
+}
+
+function renderTable(list){
+  const tbody = document.getElementById('ranking-body');
+  tbody.innerHTML = '';
+
+  list.forEach(v=>{
+    const finalRank = v.finalRank ? v.finalRank : '—';
+
+    let countryCellHtml = '';
+    if (v.flagPath){
+      // 国旗画像だけ表示。ソート用・意味付けとして alt/title に国名を入れる
+      countryCellHtml = `<img src="${v.flagPath}" alt="${v.country}" title="${v.country}" class="flag-icon">`;
+    } else {
+      // 国旗がない国は文字表示
+      const countryText = v.country || '';
+      countryCellHtml = countryText;
     }
 
-    function renderTable(list) {
-      const tbody = document.getElementById('ranking-body');
-      tbody.innerHTML = '';
-      list.forEach((v) => {
-        const finalRank = v.finalRank && v.finalRank !== '' ? v.finalRank : '—';
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${v.pianist || ''}</td>
-          <td>${v.country || ''}</td>
-          <td class="num-col">${formatNumber(v.viewCount)}</td>
-          <td class="num-col">${formatNumber(v.likeCount)}</td>
-          <td class="rank-col">${finalRank}</td>
-          <td><a href="${v.url}" target="_blank" rel="noopener noreferrer">リンク</a></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${v.pianist || ''}</td>
+      <td>${countryCellHtml}</td>
+      <td class="num-col">${formatNumber(v.viewCount)}</td>
+      <td class="num-col">${formatNumber(v.likeCount)}</td>
+      <td class="rank-col">${finalRank}</td>
+      <td><a href="${v.url}" target="_blank" rel="noopener noreferrer">リンク</a></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
-    function sortAndRender(key, dir) {
-      const sorted = [...videos].sort((a, b) => {
-        const va = a[key] ?? 0;
-        const vb = b[key] ?? 0;
-        if (dir === 'asc') {
-          return va - vb;
-        } else {
-          return vb - va;
-        }
-      });
-      renderTable(sorted);
-    }
+function sortAndRender(key, dir, type){
+  const sorted = [...videos].sort((a,b)=>{
+    const va = a[key];
+    const vb = b[key];
 
-    function setupSortIcons() {
-      const icons = document.querySelectorAll('.sort-icon');
-      icons.forEach(icon => {
-        icon.addEventListener('click', () => {
-          const key = icon.getAttribute('data-key');
-          const dir = icon.getAttribute('data-dir');
-          icons.forEach(i => i.classList.remove('active'));
-          icon.classList.add('active');
-          sortAndRender(key, dir);
-        });
-      });
+    if(type === 'number'){
+      const na = (typeof va === 'number') ? va : (parseFloat(va) || 0);
+      const nb = (typeof vb === 'number') ? vb : (parseFloat(vb) || 0);
+      return dir === 'asc' ? na - nb : nb - na;
+    } else {
+      const sa = (va ?? '').toString();
+      const sb = (vb ?? '').toString();
+      return dir === 'asc'
+        ? sa.localeCompare(sb, 'ja')
+        : sb.localeCompare(sa, 'ja');
     }
+  });
 
-    // 初期表示: 再生回数 多い順（▼ をデフォルトアクティブ）
-    document.addEventListener('DOMContentLoaded', () => {
-      setupSortIcons();
-      const defaultIcon = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
-      if (defaultIcon) {
-        defaultIcon.classList.add('active');
-      }
-      sortAndRender('viewCount', 'desc');
+  renderTable(sorted);
+}
+
+function setupSortIcons(){
+  const icons = document.querySelectorAll('.sort-icon');
+  icons.forEach(icon=>{
+    icon.addEventListener('click',()=>{
+      const key = icon.getAttribute('data-key');
+      const dir = icon.getAttribute('data-dir');
+      const type = icon.getAttribute('data-type') || 'number';
+      icons.forEach(i=>i.classList.remove('active'));
+      icon.classList.add('active');
+      sortAndRender(key, dir, type);
     });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  setupSortIcons();
+  const defaultIcon = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
+  if(defaultIcon){
+    defaultIcon.classList.add('active');
+  }
+  sortAndRender('viewCount','desc','number');
+});
+
   </script>
 </body>
 </html>
