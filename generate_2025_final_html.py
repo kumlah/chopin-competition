@@ -91,7 +91,7 @@ def determine_final_result(comp):
     最終結果テキストとソート用キーを決める。
     ルール:
       1) 最終順位あり        → 「n位」「n位、◯◯賞」
-      2) 最終順位空 & ファイナルあり → 「ファイナル進出」
+      2) 最終順位空 & ファイナルあり → 「ファイナリスト」
       3) ファイナル空 & 第3あり     → 「第3ラウンド進出」
       4) 第3空 & 第2あり           → 「第2ラウンド進出」
       5) それ以外                  → 「-」
@@ -99,7 +99,7 @@ def determine_final_result(comp):
     ソート順（昇順時）:
       category:
         0: 最終順位あり
-        1: ファイナル進出
+        1: ファイナリスト
         2: 第3ラウンド進出
         3: 第2ラウンド進出
         4: 第1のみ / 不明
@@ -125,9 +125,9 @@ def determine_final_result(comp):
         prize_order = 0 if prize else 1
         return text, category, rank_num, prize_order
 
-    # 2) ファイナル進出
+    # 2) ファイナリスト
     if has_final:
-        text = "ファイナル進出"
+        text = "ファイナリスト"
         category = 1
         return text, category, 999, 1
 
