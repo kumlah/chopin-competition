@@ -1,0 +1,52 @@
+name: Run 2025_2nd and commit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write  # GITHUB_TOKEN でリポジトリ内容を書き換えるために必要
+
+jobs:
+  run-2025_2nd:
+    runs-on: ubuntu-latest
+
+    env:
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # ちゃんと履歴付きでチェックアウト
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run 2025_2nd.py
+        run: python 2025_2nd.py
+
+      - name: Commit and push if 2025_2nd.json changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "=== git status before commit ==="
+          git status
+          ls -al
+
+          # 2025_2nd.json に「未コミットの変更 or 未追跡」があるかどうかを確認
+          if [ -n "$(git status --porcelain 2025_2nd.json)" ]; then
+            echo "Changes detected in 2025_2nd.json. Committing..."
+            git add 2025_2nd.json
+            git commit -m "Update 2025_2nd.json [skip ci]"
+            git push
+          else
+            echo "No changes in 2025_2nd.json; nothing to commit."
+          fi
