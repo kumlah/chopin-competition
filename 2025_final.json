@@ -173,5 +173,87 @@
         "likeCount": 10408
       }
     ]
+  },
+  {
+    "date": "2025-11-17",
+    "videos": [
+      {
+        "videoId": "tYfpS1jt8ck",
+        "url": "https://www.youtube.com/watch?v=tYfpS1jt8ck",
+        "publishedAt": "2025-10-19T11:30:54Z",
+        "viewCount": 60500,
+        "likeCount": 1081
+      },
+      {
+        "videoId": "_G0TBsTYjvQ",
+        "url": "https://www.youtube.com/watch?v=_G0TBsTYjvQ",
+        "publishedAt": "2025-10-19T01:46:32Z",
+        "viewCount": 747407,
+        "likeCount": 13809
+      },
+      {
+        "videoId": "BOCTW4qyDqY",
+        "url": "https://www.youtube.com/watch?v=BOCTW4qyDqY",
+        "publishedAt": "2025-10-20T05:09:40Z",
+        "viewCount": 217713,
+        "likeCount": 3925
+      },
+      {
+        "videoId": "xsVgT3vtruM",
+        "url": "https://www.youtube.com/watch?v=xsVgT3vtruM",
+        "publishedAt": "2025-10-19T08:03:06Z",
+        "viewCount": 480569,
+        "likeCount": 10428
+      },
+      {
+        "videoId": "GFTHzzFA-TQ",
+        "url": "https://www.youtube.com/watch?v=GFTHzzFA-TQ",
+        "publishedAt": "2025-10-18T21:45:40Z",
+        "viewCount": 1057313,
+        "likeCount": 15389
+      },
+      {
+        "videoId": "omqTpiBXfnA",
+        "url": "https://www.youtube.com/watch?v=omqTpiBXfnA",
+        "publishedAt": "2025-10-19T20:03:02Z",
+        "viewCount": 186151,
+        "likeCount": 2954
+      },
+      {
+        "videoId": "8gphqTkmnR8",
+        "url": "https://www.youtube.com/watch?v=8gphqTkmnR8",
+        "publishedAt": "2025-10-20T23:54:39Z",
+        "viewCount": 517563,
+        "likeCount": 9583
+      },
+      {
+        "videoId": "1WdkvGV7sBY",
+        "url": "https://www.youtube.com/watch?v=1WdkvGV7sBY",
+        "publishedAt": "2025-10-19T21:06:00Z",
+        "viewCount": 291748,
+        "likeCount": 6300
+      },
+      {
+        "videoId": "_QgvXbaLFPs",
+        "url": "https://www.youtube.com/watch?v=_QgvXbaLFPs",
+        "publishedAt": "2025-10-20T21:34:03Z",
+        "viewCount": 202790,
+        "likeCount": 2717
+      },
+      {
+        "videoId": "5duUDPKSrKk",
+        "url": "https://www.youtube.com/watch?v=5duUDPKSrKk",
+        "publishedAt": "2025-10-19T22:59:44Z",
+        "viewCount": 93847,
+        "likeCount": 1823
+      },
+      {
+        "videoId": "QklhpTBNp3s",
+        "url": "https://www.youtube.com/watch?v=QklhpTBNp3s",
+        "publishedAt": "2025-10-20T21:29:39Z",
+        "viewCount": 136356,
+        "likeCount": 4609
+      }
+    ]
   }
 ]
