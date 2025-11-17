@@ -90,9 +90,9 @@ def determine_final_result(comp):
         prize_order = 0 if prize else 1
         return text, category, rank_num, prize_order
 
-    # 2) ファイナル進出（動画ある人）
+    # 2) ファイナリスト（動画ある人）
     if has_final:
-        text = "ファイナル進出"
+        text = "ファイナリスト"
         category = 1
         return text, category, 999, 1
 
