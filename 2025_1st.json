@@ -1,0 +1,28 @@
+[
+  {
+    "date": "2025-11-20",
+    "videos": [
+      {
+        "videoId": "kAQtuk26ZHs",
+        "url": "https://www.youtube.com/watch?v=kAQtuk26ZHs",
+        "publishedAt": "2025-10-04T14:05:05Z",
+        "viewCount": 98591,
+        "likeCount": 1394
+      },
+      {
+        "videoId": "btu2XCm0k0M",
+        "url": "https://www.youtube.com/watch?v=btu2XCm0k0M",
+        "publishedAt": "2025-10-04T14:55:46Z",
+        "viewCount": 38673,
+        "likeCount": 819
+      },
+      {
+        "videoId": "OR1bVsfQtws",
+        "url": "https://www.youtube.com/watch?v=OR1bVsfQtws",
+        "publishedAt": "2025-10-04T18:06:26Z",
+        "viewCount": 39199,
+        "likeCount": 854
+      }
+    ]
+  }
+]
