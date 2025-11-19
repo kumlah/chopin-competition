@@ -310,4 +310,194 @@ def main():
         "            <th>名前"
         "              <span class='sort-icons'>"
         "                <span class='sort-icon' data-key='pianistSortKey' data-dir='asc' data-type='string'>▲</span>"
-        "                <span class='sort-icon' data-key='pianistSortKey' data-dir='desc' data-type='string'>▼</
+        "                <span class='sort-icon' data-key='pianistSortKey' data-dir='desc' data-type='string'>▼</span>"
+        "              </span>"
+        "            </th>"
+    )
+    html.append(
+        "            <th style='width:6em;'>国"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='country' data-dir='asc' data-type='string'>▲</span>"
+        "                <span class='sort-icon' data-key='country' data-dir='desc' data-type='string'>▼</span>"
+        "              </span>"
+        "            </th>"
+    )
+    html.append(
+        "            <th style='width:5em;'>年齢"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='age' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='age' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
+    )
+    html.append(
+        "            <th style='width:8em;'>再生回数"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='viewCount' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='viewCount' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
+    )
+    html.append(
+        "            <th style='width:8em;'>高評価数"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='likeCount' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='likeCount' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
+    )
+    html.append(
+        "            <th style='width:8em;'>最終結果"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='finalSortCategory' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='finalSortCategory' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
+    )
+    html.append("            <th style='width:11em;'>動画</th>")
+    html.append("          </tr>")
+    html.append("        </thead>")
+    html.append("        <tbody id='ranking-body'></tbody>")
+    html.append("      </table>")
+
+    html.append('      <footer class="site-footer">')
+    html.append('          <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>')
+    html.append("      </footer>")
+
+    html.append("    </main>")
+
+    html.append("    <script>")
+    html.append(f"const videos = {videos_json_safe};")
+    html.append(
+        r"""
+function formatNumber(n){
+  if (n === null || n === undefined) return '';
+  return n.toLocaleString('ja-JP');
+}
+
+function renderTable(list){
+  const tbody = document.getElementById('ranking-body');
+  tbody.innerHTML = '';
+
+  list.forEach(v=>{
+    const finalText = v.finalResult || '—';
+
+    let countryCellHtml = '';
+    if (v.flagPath){
+      countryCellHtml = `<img src="${v.flagPath}" alt="${v.country}" title="${v.country}" class="flag-icon">`;
+    } else {
+      countryCellHtml = v.country || '';
+    }
+
+    const thumbUrl = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
+    const videoUrl  = v.url || `https://www.youtube.com/watch?v=${v.videoId}`;
+
+    const ageText = (v.ageYears !== null && v.ageYears !== undefined) ? v.ageYears : '';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${v.pianist || ''}</td>
+      <td>${countryCellHtml}</td>
+      <td class="num-col">${ageText}</td>
+      <td class="num-col">${formatNumber(v.viewCount)}</td>
+      <td class="num-col">${formatNumber(v.likeCount)}</td>
+      <td class="rank-col">${finalText}</td>
+      <td>
+        <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">
+          <img src="${thumbUrl}" alt="YouTube thumbnail" class="thumb-img">
+        </a>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function sortAndRender(key, dir, type){
+  const sorted = [...videos].sort((a,b)=>{
+    if (key === 'finalSortCategory'){
+      if (a.finalSortCategory !== b.finalSortCategory){
+        return dir === 'asc'
+          ? a.finalSortCategory - b.finalSortCategory
+          : b.finalSortCategory - a.finalSortCategory;
+      }
+      if (a.finalSortRankNum !== b.finalSortRankNum){
+        return dir === 'asc'
+          ? a.finalSortRankNum - b.finalSortRankNum
+          : b.finalSortRankNum - a.finalSortRankNum;
+      }
+      if (a.finalSortPrize !== b.finalSortPrize){
+        return dir === 'asc'
+          ? a.finalSortPrize - b.finalSortPrize
+          : b.finalSortPrize - a.finalSortPrize;
+      }
+      return dir === 'asc'
+        ? (a.pianistSortKey || '').localeCompare(b.pianistSortKey || '', 'ja')
+        : (b.pianistSortKey || '').localeCompare(a.pianistSortKey || '', 'ja');
+    }
+
+    if (key === 'age'){
+      const na = (typeof a.ageYears === 'number') ? a.ageYears : 999;
+      const nb = (typeof b.ageYears === 'number') ? b.ageYears : 999;
+      if (na !== nb){
+        return dir === 'asc' ? na - nb : nb - na;
+      }
+      const da = a.birthDate || '';
+      const db = b.birthDate || '';
+      return dir === 'asc'
+        ? da.localeCompare(db, 'ja')
+        : db.localeCompare(da, 'ja');
+    }
+
+    const va = a[key];
+    const vb = b[key];
+
+    if(type === 'number'){
+      const na = (typeof va === 'number') ? va : (parseFloat(va) || 0);
+      const nb = (typeof vb === 'number') ? vb : (parseFloat(vb) || 0);
+      return dir === 'asc' ? na - nb : nb - na;
+    } else {
+      const sa = (va ?? '').toString();
+      const sb = (vb ?? '').toString();
+      return dir === 'asc'
+        ? sa.localeCompare(sb, 'ja')
+        : sb.localeCompare(sa, 'ja');
+    }
+  });
+
+  renderTable(sorted);
+}
+
+function setupSortIcons(){
+  const icons = document.querySelectorAll('.sort-icon');
+  icons.forEach(icon=>{
+    icon.addEventListener('click',()=>{
+      icons.forEach(i=>i.classList.remove('active'));
+      icon.classList.add('active');
+      const key = icon.getAttribute('data-key');
+      const dir = icon.getAttribute('data-dir');
+      const type = icon.getAttribute('data-type') || 'number';
+      sortAndRender(key, dir, type);
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  setupSortIcons();
+  const defaultIcon = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
+  if(defaultIcon){
+    defaultIcon.classList.add('active');
+  }
+  sortAndRender('viewCount','desc','number');
+});
+"""
+    )
+    html.append("    </script>")
+    html.append("  </body>")
+    html.append("</html>")
+
+    HTML_PATH.write_text("\n".join(html), encoding="utf-8")
+    print(f"{HTML_PATH} を更新しました。")
+
+
+if __name__ == "__main__":
+    main()
