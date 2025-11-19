@@ -7,6 +7,9 @@ JSON_PATH = Path("2025_final.json")
 HTML_PATH = Path("2025_final.html")
 COMPETITORS_PATH = Path("competitors.json")
 
+# ★ コンクール年齢基準日（第19回ショパンコンクール：2025年10月1日時点）
+CONTEST_REF_DATE = datetime(2025, 10, 1)
+
 
 def load_latest_videos():
     if not JSON_PATH.exists():
@@ -178,7 +181,7 @@ def main():
         if vid:
             stats_map[vid] = v
 
-    # 日付を "YYYY年MM月DD日(曜)" に整形
+    # 日付を "YYYY年MM月DD日(曜)" に整形（集計日表示用）
     dt = None
     try:
         dt = datetime.fromisoformat(target_date)
@@ -215,7 +218,8 @@ def main():
 
         # 生年月日と年齢（competitors.json の "生年月日" 列を想定）
         birth_str = comp.get("生年月日", "") or ""
-        age_years, birth_for_sort = calc_age_from_birthdate(birth_str, dt or datetime.now())
+        # ★ 年齢はコンクール基準日 CONTEST_REF_DATE で計算
+        age_years, birth_for_sort = calc_age_from_birthdate(birth_str, CONTEST_REF_DATE)
 
         videos.append(
             {
@@ -316,9 +320,9 @@ def main():
 
     html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール ファイナル再生数ランキング</h1>")
     html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</p>")
-    # ★ 年齢についての注記（competitors.json ベースであることを明記）
+    # ★ 年齢についての注記（2025年10月1日時点で計算していることを明記）
     html.append(
-        "      <p style=\"font-size:0.85rem;color:#555;\">※年齢は competitors.json に記載された生年月日から、集計日時点で自動計算したものです。</p>"
+        "      <p style=\"font-size:0.85rem;color:#555;\">※年齢は competitors.json に記載された生年月日から、2025年10月1日時点で自動計算したものです。</p>"
     )
 
     # テーブル
@@ -343,7 +347,7 @@ def main():
         "              </span>"
         "            </th>"
     )
-    # ★ 年齢（表示は整数歳・ソートは年齢→生年月日）
+    # 年齢（表示は整数歳・ソートは年齢→生年月日）
     html.append(
         "            <th style='width:5em;'>年齢"
         "              <span class='sort-icons'>"
