@@ -42,7 +42,7 @@ jobs:
           ls -al
 
           # 2025_1st.json に「未コミットの変更 or 未追跡」があるかどうかを確認
-          if [ -n "$(git.status --porcelain 2025_1st.json)" ]; then
+          if [ -n "$(git status --porcelain 2025_1st.json)" ]; then
             echo "Changes detected in 2025_1st.json. Committing..."
             git add 2025_1st.json
             git commit -m "Update 2025_1st.json [skip ci]"
