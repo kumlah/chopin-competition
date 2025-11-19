@@ -7,8 +7,8 @@ JSON_PATH = Path("2025_3rd.json")
 HTML_PATH = Path("2025_3rd.html")
 COMPETITORS_PATH = Path("competitors.json")
 
-# 第3ラウンドの候補列名（環境に合わせて増やしてOK）
-ROUND_COLUMNS = ["第3"]
+# ★ コンクール年齢基準日（第19回ショパンコンクール：2025年10月1日時点）
+CONTEST_REF_DATE = datetime(2025, 10, 1)
 
 
 def load_latest_videos():
@@ -49,18 +49,6 @@ def load_competitors():
     return data
 
 
-def find_competitor_for_title(title, competitors):
-    """※今は使っていないが、念のため残しておく"""
-    if not title:
-        return None
-    title_lower = title.lower()
-    for comp in competitors:
-        name = comp.get("名前")
-        if name and name.lower() in title_lower:
-            return comp
-    return None
-
-
 def to_int_safe(value, default=0):
     try:
         return int(value)
@@ -68,7 +56,7 @@ def to_int_safe(value, default=0):
         return default
 
 
-def get_flag_filename(country):
+def get_flag_filename(country: str) -> str:
     """国名→国旗ファイル名（無い国は '' を返す）"""
     mapping = {
         "United States of America": "usa.png",
@@ -77,7 +65,6 @@ def get_flag_filename(country):
         "Japan": "japan.png",
         "Poland": "poland.png",
         "Malaysia": "malaysia.png",
-        "Republic of Korea": "korea.png",
         "Georgia": "georgia.png",
     }
     return mapping.get(country, "")
@@ -86,9 +73,9 @@ def get_flag_filename(country):
 def make_pianist_sort_key(name: str) -> str:
     """
     姓でソートするためのキーを作る。
-      - スペース区切りで分割
-      - 最後の単語を姓とみなす
-      - ソートキーは 'lastname, other parts' の形（すべて小文字）
+    - スペース区切りで分割
+    - 最後の単語を姓とみなす
+    - 'lastname, other parts' を小文字で返す
     """
     if not name:
         return ""
@@ -102,22 +89,88 @@ def make_pianist_sort_key(name: str) -> str:
     return f"{last}, {rest}"
 
 
+def determine_final_result(comp):
+    """
+    最終結果テキストとソート用キーを決める。
+    ルール:
+      1) 最終順位あり        → 「n位」「n位、◯◯賞」
+      2) 最終順位空 & ファイナルあり → 「ファイナリスト」
+      3) ファイナル空 & 第3あり     → 「第3ラウンド進出」
+      4) 第3空 & 第2あり           → 「第2ラウンド進出」
+      5) それ以外                  → 「-」
+    """
+    fr_raw = comp.get("最終順位", "")
+    prize = comp.get("賞", "") or ""
+    has_final = bool(comp.get("ファイナル"))
+    has_3 = bool(comp.get("第3"))
+    has_2 = bool(comp.get("第2"))
+
+    # 1) 最終順位あり
+    if fr_raw not in ("", None):
+        rank_num = to_int_safe(fr_raw, 999)
+        if prize:
+            text = f"{rank_num}位、{prize}"
+        else:
+            text = f"{rank_num}位"
+        category = 0
+        prize_order = 0 if prize else 1
+        return text, category, rank_num, prize_order
+
+    # 2) ファイナリスト
+    if has_final:
+        text = "ファイナリスト"
+        category = 1
+        return text, category, 999, 1
+
+    # 3) 第3進出
+    if has_3:
+        text = "第3ラウンド進出"
+        category = 2
+        return text, category, 999, 1
+
+    # 4) 第2進出
+    if has_2:
+        text = "第2ラウンド進出"
+        category = 3
+        return text, category, 999, 1
+
+    # 5) それ以外（第1のみなど）
+    text = "-"
+    category = 4
+    return text, category, 999, 1
+
+
+def calc_age_from_birthdate(birth_str: str, ref_dt: datetime):
+    """
+    生年月日文字列(YYYY-MM-DD)と基準日(ref_dt)から年齢(歳)を返す。
+    パースできなければ (None, '') を返す。
+    """
+    if not birth_str or not ref_dt:
+        return None, ""
+    try:
+        birth = datetime.fromisoformat(birth_str).date()
+    except Exception:
+        return None, ""
+    ref_date = ref_dt.date()
+    age = ref_date.year - birth.year
+    if (ref_date.month, ref_date.day) < (birth.month, birth.day):
+        age -= 1
+    return age, birth_str
+
+
 def main():
     target_date, videos_raw = load_latest_videos()
     competitors_raw = load_competitors()
 
-    # competitors.json を「videoId → 出場者情報」で引ける辞書にする
-    comp_by_video_id = {}
-    for comp in competitors_raw:
-        # 第3ラウンド用の列
-        for col in ROUND_COLUMNS:
-            vid = comp.get(col)
-            if vid:
-                comp_by_video_id.setdefault(vid, comp)
+    # 2025_3rd.json 側の統計: videoId → 統計 dict
+    stats_map = {}
+    for v in videos_raw:
+        vid = v.get("videoId") or v.get("id")
+        if vid:
+            stats_map[vid] = v
 
-        # 必要ならファイナル列もマッピング対象にする場合はここに追加
-
-    # 日付を "YYYY年MM月DD日(曜)" に整形
+    # 日付を "YYYY年MM月DD日(曜)" に整形（集計日表示用）
+    dt = None
     try:
         dt = datetime.fromisoformat(target_date)
         weekday_ja = "月火水木金土日"[dt.weekday()]
@@ -126,29 +179,34 @@ def main():
         target_date_jp = target_date
 
     videos = []
-    unmatched_count = 0  # 出場者情報が見つからなかった動画の本数
+    unmatched_count = 0  # 統計が見つからなかった第3ラウンド動画の本数
 
-    # ★ JSON 側(videos_raw)を軸に回していく
-    for stats in videos_raw:
-        video_id = stats.get("videoId") or stats.get("id")
-        if not video_id:
-            continue
+    # ★ 第3ラウンド動画IDが入っている人だけ対象にする
+    third_rounders = [c for c in competitors_raw if c.get("第3")]
 
-        comp = comp_by_video_id.get(video_id)
-        if comp is None:
+    for comp in third_rounders:
+        video_id = comp.get("第3", "")
+        stats = stats_map.get(video_id)
+        if stats is None:
             unmatched_count += 1
-            comp = {}
+            stats = {}
 
         pianist = comp.get("名前", "") or ""
         country = comp.get("国", "") or ""
 
-        # ファイナル進出判定：competitors.json の「ファイナル」列に値があれば 〇
-        final_val = comp.get("ファイナル", "")
-        finalist_flag = 1 if final_val not in ("", None) else 0
-        finalist_mark = "〇" if finalist_flag == 1 else ""
+        # 最終結果テキストとソート用キー
+        final_result_text, cat, rank_num, prize_order = determine_final_result(comp)
 
+        # 国旗
         flag_file = get_flag_filename(country)
+        flag_path = f"img/flag/{flag_file}" if flag_file else ""
+
+        # 姓ソートキー
         pianist_sort_key = make_pianist_sort_key(pianist)
+
+        # 生年月日と年齢
+        birth_str = comp.get("生年月日", "") or ""
+        age_years, birth_for_sort = calc_age_from_birthdate(birth_str, CONTEST_REF_DATE)
 
         videos.append(
             {
@@ -158,35 +216,33 @@ def main():
                 "viewCount": to_int_safe(stats.get("viewCount")),
                 "likeCount": to_int_safe(stats.get("likeCount")),
                 "pianist": pianist,
-                "pianistSortKey": pianist_sort_key,  # 姓ソート用キー
+                "pianistSortKey": pianist_sort_key,
                 "country": country,
-                "finalistFlag": finalist_flag,       # ソート用（1:ファイナル進出, 0:非進出）
-                "finalistMark": finalist_mark,       # 表示用（〇 または 空）
-                # 国旗がある国だけパスを入れる。ない国は ""。
-                "flagPath": f"img/flag/{flag_file}" if flag_file else "",
+                "finalResult": final_result_text,
+                "finalSortCategory": cat,
+                "finalSortRankNum": rank_num,
+                "finalSortPrize": prize_order,
+                "flagPath": flag_path,
+                "birthDate": birth_for_sort,
+                "ageYears": age_years,
             }
         )
 
-    # JSに埋め込む用JSON（</script 対策）
     videos_json_safe = json.dumps(videos, ensure_ascii=False).replace("</", "<\\/")
 
     html = []
-
-    # ───── DOCTYPE & <html> ─────
     html.append("<!DOCTYPE html>")
-    html.append('<html lang="en-US">')
+    html.append('<html lang="ja">')
     html.append("  <head>")
     html.append('    <meta charset="UTF-8">')
 
-    # タイトル＆description（第3ラウンド版）
     html.append(
-        "    <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025第3ラウンド集計</title>"
+        "    <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025第3次予選集計</title>"
     )
     html.append(
-        '    <meta name="description" content="ショパン国際ピアノコンクール2025第3ラウンドのYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。">'
+        '    <meta name="description" content="ショパン国際ピアノコンクール2025第3次予選のYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。">'
     )
 
-    # index.html と同じフォント・テーマ・CSS
     html.append('    <link rel="preconnect" href="https://fonts.gstatic.com">')
     html.append(
         '    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>'
@@ -200,7 +256,6 @@ def main():
         '    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css?v=76ba7eec5aa7918590041e6c94a14363f6b580e6">'
     )
 
-    # このページ専用のテーブル用CSS
     html.append("    <style>")
     html.append(
         "      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }"
@@ -210,9 +265,6 @@ def main():
     html.append("      tbody tr:nth-child(even) { background: #fafafa; }")
     html.append("      .num-col { text-align: right; white-space: nowrap; }")
     html.append("      .rank-col { text-align: right; white-space: nowrap; }")
-    html.append(
-        "      .center-col { text-align: center; white-space: nowrap; }"
-    )
     html.append(
         "      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }"
     )
@@ -229,7 +281,6 @@ def main():
     html.append("  </head>")
     html.append("  <body>")
 
-    # ───── index.html と同じヘッダー ─────
     html.append('    <a id="skip-to-content" href="#content">Skip to the content.</a>')
     html.append('    <header class="page-header" role="banner">')
     html.append(
@@ -240,207 +291,23 @@ def main():
     )
     html.append("    </header>")
 
-    # ───── メインコンテンツ ─────
     html.append('    <main id="content" class="main-content" role="main">')
 
     if unmatched_count > 0:
         html.append(
-            f'      <p style="color:#777;font-size:0.85rem;">※ {unmatched_count} 本は competitors.json に対応する出場者情報が見つかりませんでした（名前・国が空欄で表示されます）。</p>'
+            f'      <p style="color:#777;font-size:0.85rem;">※ {unmatched_count} 本は再生数データが見つかりませんでした（再生回数などが 0 として表示されます）。</p>'
         )
 
-    html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール 第3ラウンド再生数ランキング</h1>")
-    html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</p>")
+    html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール 第3次予選再生数ランキング</h1>")
+    html.append(
+        f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本 ／ 年齢は2025年10月1日時点</p>"
+    )
 
-    # テーブル
     html.append("      <table>")
     html.append("        <thead>")
     html.append("          <tr>")
-    # 名前（姓ソート）
     html.append(
         "            <th>名前"
         "              <span class='sort-icons'>"
         "                <span class='sort-icon' data-key='pianistSortKey' data-dir='asc' data-type='string'>▲</span>"
-        "                <span class='sort-icon' data-key='pianistSortKey' data-dir='desc' data-type='string'>▼</span>"
-        "              </span>"
-        "            </th>"
-    )
-    # 国（国旗のみ表示・ソートはcountry文字列）
-    html.append(
-        "            <th style='width:6em;'>国"
-        "              <span class='sort-icons'>"
-        "                <span class='sort-icon' data-key='country' data-dir='asc' data-type='string'>▲</span>"
-        "                <span class='sort-icon' data-key='country' data-dir='desc' data-type='string'>▼</span>"
-        "              </span>"
-        "            </th>"
-    )
-    # 再生回数
-    html.append(
-        "            <th style='width:8em;'>再生回数"
-        "              <span class='sort-icons'>"
-        "                <span class='sort-icon' data-key='viewCount' data-dir='asc' data-type='number'>▲</span>"
-        "                <span class='sort-icon' data-key='viewCount' data-dir='desc' data-type='number'>▼</span>"
-        "              </span>"
-        "            </th>"
-    )
-    # 高評価数
-    html.append(
-        "            <th style='width:8em;'>高評価数"
-        "              <span class='sort-icons'>"
-        "                <span class='sort-icon' data-key='likeCount' data-dir='asc' data-type='number'>▲</span>"
-        "                <span class='sort-icon' data-key='likeCount' data-dir='desc' data-type='number'>▼</span>"
-        "              </span>"
-        "            </th>"
-    )
-    # ファイナル進出
-    html.append(
-        "            <th style='width:6em;'>ファイナル進出"
-        "              <span class='sort-icons'>"
-        "                <span class='sort-icon' data-key='finalistFlag' data-dir='asc' data-type='number'>▲</span>"
-        "                <span class='sort-icon' data-key='finalistFlag' data-dir='desc' data-type='number'>▼</span>"
-        "              </span>"
-        "            </th>"
-    )
-    # 動画（サムネ付きリンク）
-    html.append("            <th style='width:11em;'>動画</th>")
-    html.append("          </tr>")
-    html.append("        </thead>")
-    html.append("        <tbody id='ranking-body'></tbody>")
-    html.append("      </table>")
-
-    # ───── フッター ─────
-    html.append('      <footer class="site-footer">')
-    html.append('          <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>')
-    html.append("      </footer>")
-
-    html.append("    </main>")
-
-    # ───── JS ─────
-    html.append("    <script>")
-    html.append(f"const videos = {videos_json_safe};")
-
-    html.append(
-        r"""
-function formatNumber(n){
-  if (n === null || n === undefined) return '';
-  return n.toLocaleString('ja-JP');
-}
-
-// tbody内に再掲する見出し行（ソートアイコンなし）
-const repeatHeaderHtml = `
-  <tr class="repeat-header">
-    <th>名前</th>
-    <th style="width:6em;">国</th>
-    <th style="width:8em;">再生回数</th>
-    <th style="width:8em;">高評価数</th>
-    <th style="width:6em;">ファイナル進出</th>
-    <th style="width:11em;">動画</th>
-  </tr>
-`;
-
-function renderTable(list){
-  const tbody = document.getElementById('ranking-body');
-  tbody.innerHTML = '';
-
-  let rowCount = 0;
-
-  list.forEach((v, index)=>{
-    let countryCellHtml = '';
-    if (v.flagPath){
-      // 国旗画像だけ表示。ソート用・意味付けとして alt/title に国名を入れる
-      countryCellHtml = `<img src="${v.flagPath}" alt="${v.country}" title="${v.country}" class="flag-icon">`;
-    } else {
-      // 国旗がない国は文字表示
-      const countryText = v.country || '';
-      countryCellHtml = countryText;
-    }
-
-    // サムネイルURL
-    const thumbUrl = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
-    const videoUrl  = v.url || `https://www.youtube.com/watch?v=${v.videoId}`;
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${v.pianist || ''}</td>
-      <td>${countryCellHtml}</td>
-      <td class="num-col">${formatNumber(v.viewCount)}</td>
-      <td class="num-col">${formatNumber(v.likeCount)}</td>
-      <td class="center-col">${v.finalistMark || ''}</td>
-      <td>
-        <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">
-          <img src="${thumbUrl}" alt="YouTube thumbnail" class="thumb-img">
-        </a>
-      </td>
-    `;
-    tbody.appendChild(tr);
-    rowCount++;
-
-    // 10行ごとに見出し行を挿入（最後の行の直後は一旦スキップ）
-    if (rowCount % 10 === 0 && index !== list.length - 1){
-      const headerTr = document.createElement('tr');
-      headerTr.innerHTML = repeatHeaderHtml;
-      tbody.appendChild(headerTr);
-    }
-  });
-
-  // 表の一番下にも見出し行を追加
-  const bottomHeaderTr = document.createElement('tr');
-  bottomHeaderTr.innerHTML = repeatHeaderHtml;
-  tbody.appendChild(bottomHeaderTr);
-}
-
-function sortAndRender(key, dir, type){
-  const sorted = [...videos].sort((a,b)=>{
-    const va = a[key];
-    const vb = b[key];
-
-    if(type === 'number'){
-      const na = (typeof va === 'number') ? va : (parseFloat(va) || 0);
-      const nb = (typeof vb === 'number') ? vb : (parseFloat(vb) || 0);
-      return dir === 'asc' ? na - nb : nb - na;
-    } else {
-      const sa = (va ?? '').toString();
-      const sb = (vb ?? '').toString();
-      return dir === 'asc'
-        ? sa.localeCompare(sb, 'ja')
-        : sb.localeCompare(sa, 'ja');
-    }
-  });
-
-  renderTable(sorted);
-}
-
-function setupSortIcons(){
-  const icons = document.querySelectorAll('.sort-icon');
-  icons.forEach(icon=>{
-    icon.addEventListener('click',()=>{
-      const key = icon.getAttribute('data-key');
-      const dir = icon.getAttribute('data-dir');
-      const type = icon.getAttribute('data-type') || 'number';
-      icons.forEach(i=>i.classList.remove('active'));
-      icon.classList.add('active');
-      sortAndRender(key, dir, type);
-    });
-  });
-}
-
-document.addEventListener('DOMContentLoaded', ()=>{
-  setupSortIcons();
-  const defaultIcon = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
-  if(defaultIcon){
-    defaultIcon.classList.add('active');
-  }
-  sortAndRender('viewCount','desc','number');
-});
-"""
-    )
-
-    html.append("    </script>")
-    html.append("  </body>")
-    html.append("</html>")
-
-    HTML_PATH.write_text("\n".join(html), encoding="utf-8")
-    print(f"{HTML_PATH} を更新しました。")
-
-
-if __name__ == "__main__":
-    main()
+        "                <span class='sort-icon' data-key='pianistSortKey' data-dir='desc' data-type='string'>▼</
