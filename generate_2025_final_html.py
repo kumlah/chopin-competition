@@ -319,12 +319,9 @@ def main():
         )
 
     html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール ファイナル再生数ランキング</h1>")
-    html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</p>")
+    html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本 ／ 年齢は2025年10月1日時点</p>")
     # ★ 年齢についての注記（2025年10月1日時点で計算していることを明記）
-    html.append(
-        "      <p style=\"font-size:0.85rem;color:#555;\">※年齢は competitors.json に記載された生年月日から、2025年10月1日時点で自動計算したものです。</p>"
-    )
-
+    
     # テーブル
     html.append("      <table>")
     html.append("        <thead>")
