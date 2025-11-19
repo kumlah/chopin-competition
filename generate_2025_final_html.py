@@ -149,6 +149,24 @@ def determine_final_result(comp):
     return text, category, 999, 1
 
 
+def calc_age_from_birthdate(birth_str: str, ref_dt: datetime):
+    """
+    生年月日文字列(YYYY-MM-DD)と基準日(ref_dt)から年齢(歳)を返す。
+    パースできなければ (None, '') を返す。
+    """
+    if not birth_str or not ref_dt:
+        return None, ""
+    try:
+        birth = datetime.fromisoformat(birth_str).date()
+    except Exception:
+        return None, ""
+    ref_date = ref_dt.date()
+    age = ref_date.year - birth.year
+    if (ref_date.month, ref_date.day) < (birth.month, birth.day):
+        age -= 1
+    return age, birth_str
+
+
 def main():
     target_date, videos_raw = load_latest_videos()
     competitors_raw = load_competitors()
@@ -161,6 +179,7 @@ def main():
             stats_map[vid] = v
 
     # 日付を "YYYY年MM月DD日(曜)" に整形
+    dt = None
     try:
         dt = datetime.fromisoformat(target_date)
         weekday_ja = "月火水木金土日"[dt.weekday()]
@@ -194,6 +213,10 @@ def main():
         # 姓ソートキー
         pianist_sort_key = make_pianist_sort_key(pianist)
 
+        # 生年月日と年齢（competitors.json の "生年月日" 列を想定）
+        birth_str = comp.get("生年月日", "") or ""
+        age_years, birth_for_sort = calc_age_from_birthdate(birth_str, dt or datetime.now())
+
         videos.append(
             {
                 "videoId": video_id,
@@ -209,6 +232,9 @@ def main():
                 "finalSortRankNum": rank_num,
                 "finalSortPrize": prize_order,
                 "flagPath": flag_path,
+                # 年齢関連
+                "birthDate": birth_for_sort,  # ソート用に生年月日文字列をそのまま持たせる
+                "ageYears": age_years,        # 表示用の年齢（整数 or None）
             }
         )
 
@@ -290,6 +316,10 @@ def main():
 
     html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール ファイナル再生数ランキング</h1>")
     html.append(f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本</p>")
+    # ★ 年齢についての注記（competitors.json ベースであることを明記）
+    html.append(
+        "      <p style=\"font-size:0.85rem;color:#555;\">※年齢は competitors.json に記載された生年月日から、集計日時点で自動計算したものです。</p>"
+    )
 
     # テーブル
     html.append("      <table>")
@@ -313,6 +343,15 @@ def main():
         "              </span>"
         "            </th>"
     )
+    # ★ 年齢（表示は整数歳・ソートは年齢→生年月日）
+    html.append(
+        "            <th style='width:5em;'>年齢"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='age' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='age' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
+    )
     # 再生回数
     html.append(
         "            <th style='width:8em;'>再生回数"
@@ -331,7 +370,7 @@ def main():
         "              </span>"
         "            </th>"
     )
-    # 最終結果（←ここが元「最終順位」）
+    # 最終結果
     html.append(
         "            <th style='width:8em;'>最終結果"
         "              <span class='sort-icons'>"
@@ -382,10 +421,13 @@ function renderTable(list){
     const thumbUrl = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
     const videoUrl  = v.url || `https://www.youtube.com/watch?v=${v.videoId}`;
 
+    const ageText = (v.ageYears !== null && v.ageYears !== undefined) ? v.ageYears : '';
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${v.pianist || ''}</td>
       <td>${countryCellHtml}</td>
+      <td class="num-col">${ageText}</td>
       <td class="num-col">${formatNumber(v.viewCount)}</td>
       <td class="num-col">${formatNumber(v.likeCount)}</td>
       <td class="rank-col">${finalText}</td>
@@ -422,6 +464,20 @@ function sortAndRender(key, dir, type){
       return dir === 'asc'
         ? (a.pianistSortKey || '').localeCompare(b.pianistSortKey || '', 'ja')
         : (b.pianistSortKey || '').localeCompare(a.pianistSortKey || '', 'ja');
+    }
+
+    // ★ 年齢列のソート: 年齢 → 生年月日
+    if (key === 'age'){
+      const na = (typeof a.ageYears === 'number') ? a.ageYears : 999;
+      const nb = (typeof b.ageYears === 'number') ? b.ageYears : 999;
+      if (na !== nb){
+        return dir === 'asc' ? na - nb : nb - na;
+      }
+      const da = a.birthDate || '';
+      const db = b.birthDate || '';
+      return dir === 'asc'
+        ? da.localeCompare(db, 'ja')
+        : db.localeCompare(da, 'ja');
     }
 
     const va = a[key];
