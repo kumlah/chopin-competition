@@ -3,7 +3,8 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-JSON_PATH = Path("2025_1st.json")
+# ★ 統合JSON（単一dict）を参照
+JSON_PATH = Path("all_rounds_view_count.json")
 HTML_PATH = Path("2025_1st.html")
 COMPETITORS_PATH = Path("competitors.json")
 
@@ -14,28 +15,32 @@ ROUND_LABEL = "第1ラウンド"
 
 
 def load_latest_videos():
+    """
+    all_rounds_view_count.json のスキーマ（単一dict）に合わせて読む。
+    {
+      "date": "YYYY-MM-DD",
+      "videos": {
+         "<videoId>": {"viewCount":..., "likeCount":...},
+         ...
+      },
+      "rounds": {...}
+    }
+    """
     if not JSON_PATH.exists():
         raise FileNotFoundError(f"{JSON_PATH} が見つかりません。パスを確認してください。")
 
     with JSON_PATH.open("r", encoding="utf-8") as f:
         data = json.load(f)
 
-    if not isinstance(data, list) or not data:
-        raise ValueError(f"{JSON_PATH.name} の最上位が空でないリストになっていないようです。")
+    if not isinstance(data, dict):
+        raise ValueError(f"{JSON_PATH.name} の最上位は dict を想定しています。")
 
-    def parse_date(entry):
-        s = entry.get("date", "")
-        try:
-            return datetime.fromisoformat(s)
-        except Exception:
-            return datetime.min
+    target_date = data.get("date", "")
+    videos_map = data.get("videos", {})
+    if not isinstance(videos_map, dict):
+        raise ValueError("'videos' が dict ではないようです。")
 
-    latest_entry = max(data, key=parse_date)
-    videos = latest_entry.get("videos", [])
-    if not isinstance(videos, list):
-        raise ValueError("latest_entry['videos'] がリストではないようです。")
-
-    return latest_entry.get("date", ""), videos
+    return target_date, videos_map
 
 
 def load_competitors():
@@ -136,16 +141,9 @@ def calc_age_from_birthdate(birth_str: str, ref_dt: datetime):
 
 
 def main():
-    target_date, videos_raw = load_latest_videos()
+    target_date, videos_map = load_latest_videos()
     competitors_raw = load_competitors()
 
-    stats_map = {}
-    for v in videos_raw:
-        vid = v.get("videoId") or v.get("id")
-        if vid:
-            stats_map[vid] = v
-
-    dt = None
     try:
         dt = datetime.fromisoformat(target_date)
         weekday_ja = "月火水木金土日"[dt.weekday()]
@@ -156,11 +154,14 @@ def main():
     videos = []
     unmatched_count = 0
 
+    # competitors.json の「第1」列がある人だけ
     round_players = [c for c in competitors_raw if c.get(ROUND_KEY)]
 
     for comp in round_players:
         video_id = comp.get(ROUND_KEY, "")
-        stats = stats_map.get(video_id)
+
+        # 統合JSONの videos は dict: {videoId: {viewCount, likeCount}}
+        stats = videos_map.get(video_id)
         if stats is None:
             unmatched_count += 1
             stats = {}
@@ -181,8 +182,8 @@ def main():
         videos.append(
             {
                 "videoId": video_id,
-                "url": stats.get("url") or f"https://www.youtube.com/watch?v={video_id}",
-                "publishedAt": stats.get("publishedAt", ""),
+                "url": f"https://www.youtube.com/watch?v={video_id}",
+                "publishedAt": "",  # 統合JSONに無いので空
                 "viewCount": to_int_safe(stats.get("viewCount")),
                 "likeCount": to_int_safe(stats.get("likeCount")),
                 "pianist": pianist,
