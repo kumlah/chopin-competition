@@ -64,3 +64,29 @@ html, body {
 .content {
   overflow: visible !important;
 }
+
+/* ===== minimal が table を block 化して sticky を殺す問題の対策 ===== */
+/* 影響範囲は table-wrap 内だけに限定 */
+
+.table-wrap table {
+  display: table !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+.table-wrap thead {
+  display: table-header-group !important;
+}
+
+.table-wrap tbody {
+  display: table-row-group !important;
+}
+
+.table-wrap tr {
+  display: table-row !important;
+}
+
+.table-wrap th,
+.table-wrap td {
+  display: table-cell !important;
+}
