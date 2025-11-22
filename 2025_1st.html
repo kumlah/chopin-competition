@@ -92,7 +92,6 @@ let videos = [];
 const FLAG_CDN_BASE = "https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.5.0/flags/4x3";
 
 // 国名→ISO alpha-2 の最低限マップ
-// ※表記ゆれや非ISOはここで救う
 const COUNTRY_CODE_OVERRIDE = {
   "United States of America": "us",
   "USA": "us",
@@ -107,8 +106,6 @@ const COUNTRY_CODE_OVERRIDE = {
   "Canada": "ca",
   "Malaysia": "my",
   "Georgia": "ge",
-
-  // よく出そうな非ISO/別称の救済例（必要に応じて足してね）
   "Chinese Taipei": "tw",
   "Taiwan": "tw",
   "Hong Kong, China": "hk"
@@ -128,25 +125,19 @@ function formatRatio(x){
   return (x*100).toLocaleString("ja-JP", {maximumFractionDigits:2}) + "%";
 }
 
-// 国名文字列を / で分割して配列に
 function splitCountries(countryStr){
   if (!countryStr) return [];
   return countryStr.split("/").map(s=>s.trim()).filter(Boolean);
 }
 
-// 国名→コードを引く（なければ空）
 function getCountryCode(countryName){
   if (!countryName) return "";
   if (COUNTRY_CODE_OVERRIDE[countryName]) return COUNTRY_CODE_OVERRIDE[countryName];
-
-  // すでに "jp" みたいなコードが来てたら使う保険（2文字英字のみ）
   const maybe = countryName.trim().toLowerCase();
   if (/^[a-z]{2}$/.test(maybe)) return maybe;
-
   return "";
 }
 
-// 国旗HTML生成（複数旗対応）
 function makeFlagsHtml(countryStr){
   const parts = splitCountries(countryStr);
   if (parts.length === 0) return "";
@@ -161,7 +152,6 @@ function makeFlagsHtml(countryStr){
   if (imgs.length > 0){
     return `<span class="flags-wrap">${imgs.join("")}</span>`;
   }
-  // どれも旗にできなかったら国名テキスト
   return countryStr;
 }
 
@@ -174,21 +164,55 @@ function makePianistSortKey(name){
   return `${last}, ${rest}`;
 }
 
+/**
+ * 最終結果とソート用カテゴリを作る
+ * - 賞があれば必ず併記
+ * - category / rankNum / hasPrize を返す
+ */
 function determineFinalResult(c){
   const frRaw = c["最終順位"];
-  const prize = c["賞"] || "";
+  const prize = (c["賞"] || "").trim();
+  const hasPrize = prize !== "";
   const hasFinal = Boolean(c["ファイナル"]);
   const has3 = Boolean(c["第3"]);
   const has2 = Boolean(c["第2"]);
 
+  // 1) 順位つき
   if (frRaw !== "" && frRaw !== null && frRaw !== undefined){
     const rankNum = toIntSafe(frRaw, 999);
-    return { text: prize ? `${rankNum}位、${prize}` : `${rankNum}位`, category:0, rankNum, prizeOrder: prize ? 0:1 };
+    const baseText = `${rankNum}位`;
+    const text = hasPrize ? `${baseText}、${prize}` : baseText;
+    return {
+      text,
+      category: 0,
+      rankNum,
+      hasPrizeSort: hasPrize ? 0 : 1  // 0が上
+    };
   }
-  if (hasFinal) return { text:"ファイナリスト", category:1, rankNum:999, prizeOrder:1 };
-  if (has3) return { text:"第3ラウンド進出", category:2, rankNum:999, prizeOrder:1 };
-  if (has2) return { text:"第2ラウンド進出", category:3, rankNum:999, prizeOrder:1 };
-  return { text:"-", category:4, rankNum:999, prizeOrder:1 };
+
+  // 2) ラウンド進出
+  let baseText = "-";
+  let category = 4;
+
+  if (hasFinal){
+    baseText = "ファイナリスト";
+    category = 1;
+  } else if (has3){
+    baseText = "第3ラウンド進出";
+    category = 2;
+  } else if (has2){
+    baseText = "第2ラウンド進出";
+    category = 3;
+  }
+
+  const text = hasPrize ? `${baseText}、${prize}` : baseText;
+
+  return {
+    text,
+    category,
+    rankNum: 999,
+    hasPrizeSort: hasPrize ? 0 : 1
+  };
 }
 
 function calcAge(birthStr){
@@ -231,15 +255,25 @@ function sortAndRender(key, dir, type){
   const sorted = [...videos].sort((a,b)=>{
 
     if (key==="finalSortCategory"){
+      // ①カテゴリ（順位あり→ファイナル→3rd→2nd→1st止まり）
       if (a.finalSortCategory !== b.finalSortCategory)
-        return (dir==="asc") ? a.finalSortCategory-b.finalSortCategory : b.finalSortCategory-a.finalSortCategory;
+        return (dir==="asc")
+          ? a.finalSortCategory - b.finalSortCategory
+          : b.finalSortCategory - a.finalSortCategory;
 
+      // ②（カテゴリ0のみ）順位数
       if (a.finalSortRankNum !== b.finalSortRankNum)
-        return (dir==="asc") ? a.finalSortRankNum-b.finalSortRankNum : b.finalSortRankNum-a.finalSortRankNum;
+        return (dir==="asc")
+          ? a.finalSortRankNum - b.finalSortRankNum
+          : b.finalSortRankNum - a.finalSortRankNum;
 
-      if (a.finalSortPrize !== b.finalSortPrize)
-        return (dir==="asc") ? a.finalSortPrize-b.finalSortPrize : b.finalSortPrize-a.finalSortPrize;
+      // ③同率なら賞ありを上に（0が上）
+      if (a.finalSortHasPrize !== b.finalSortHasPrize)
+        return (dir==="asc")
+          ? a.finalSortHasPrize - b.finalSortHasPrize
+          : b.finalSortHasPrize - a.finalSortHasPrize;
 
+      // ④それでも同率なら姓ソートキー
       return (dir==="asc")
         ? (a.pianistSortKey||"").localeCompare(b.pianistSortKey||"","ja")
         : (b.pianistSortKey||"").localeCompare(a.pianistSortKey||"","ja");
@@ -323,7 +357,7 @@ async function loadAndBuild(){
       finalResult: fr.text,
       finalSortCategory: fr.category,
       finalSortRankNum: fr.rankNum,
-      finalSortPrize: fr.prizeOrder,
+      finalSortHasPrize: fr.hasPrizeSort,
       viewCount,
       likeCount,
       likeRatio,
