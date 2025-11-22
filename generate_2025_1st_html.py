@@ -10,7 +10,6 @@ ROUND_LABEL = "第1ラウンド"
 # 年齢基準日
 CONTEST_REF_DATE_ISO = "2025-10-01"
 
-
 def main():
     html = []
     html.append("<!DOCTYPE html>")
@@ -34,7 +33,7 @@ def main():
         '    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css">'
     )
 
-    # ★ sticky対応CSS 完全版
+    # ★ sticky対応CSS
     html.append("    <style>")
     html.append("      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }")
     html.append("      th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }")
@@ -45,20 +44,24 @@ def main():
     html.append("      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }")
     html.append("      .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }")
     html.append("      .sort-icon.active { color: #000; font-weight: bold; }")
+
+    # 国旗（CDN SVG）
     html.append("      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }")
+    html.append("      .flags-wrap { display: inline-flex; gap: 2px; align-items: center; }")
+
     html.append("      .thumb-img { width: 120px; aspect-ratio: 16/9; object-fit: cover; display: block; }")
     html.append("      .muted { color:#777; font-size:0.85rem; }")
 
     # ★ stickyに必要なスクロールコンテナ
     html.append("      .table-wrap{")
     html.append("        width: 100%;")
-    html.append("        height: 80vh;")          # ←固定高さにし、縦スクロールを強制
+    html.append("        height: 80vh;")
     html.append("        overflow: auto;")
     html.append("        border: 1px solid #ddd;")
-    html.append("        position: relative;")     # stickyの基準を安定
+    html.append("        position: relative;")
     html.append("      }")
 
-    # ★ ヘッダー行固定（GitHub CSS に負けないよう important）
+    # ★ ヘッダー行固定
     html.append("      .table-wrap thead th{")
     html.append("        position: sticky !important;")
     html.append("        top: 0 !important;")
@@ -75,7 +78,7 @@ def main():
     html.append("        background: #fff;")
     html.append("      }")
 
-    # ★ 左上セル（行×列の交差点）
+    # ★ 左上セル
     html.append("      .table-wrap thead th:first-child{")
     html.append("        z-index: 6;")
     html.append("        background: #f0f0f0;")
@@ -102,13 +105,12 @@ def main():
     html.append('      <p id="summary-line" class="muted">読み込み中…</p>')
     html.append('      <p id="unmatched-line" class="muted"></p>')
 
-    # ★ テーブルをスクロール可能ボックスに入れる
     html.append('      <div class="table-wrap">')
     html.append("      <table>")
     html.append("        <thead>")
     html.append("          <tr>")
 
-    # 名前列（先頭列固定対象）
+    # 名前
     html.append(
         "            <th>名前"
         "              <span class='sort-icons'>"
@@ -158,6 +160,16 @@ def main():
         "            </th>"
     )
 
+    # 高評価率
+    html.append(
+        "            <th style='width:8em;'>高評価率"
+        "              <span class='sort-icons'>"
+        "                <span class='sort-icon' data-key='likeRatio' data-dir='asc' data-type='number'>▲</span>"
+        "                <span class='sort-icon' data-key='likeRatio' data-dir='desc' data-type='number'>▼</span>"
+        "              </span>"
+        "            </th>"
+    )
+
     # 最終結果
     html.append(
         "            <th style='width:8em;'>最終結果"
@@ -182,7 +194,6 @@ def main():
     html.append("      </footer>")
     html.append("    </main>")
 
-    # ★ fetch + 描画 JS（sticky対応そのまま動く）
     html.append("    <script>")
     html.append(f"const ROUND_KEY = {ROUND_KEY!r};")
     html.append(f"const ROUND_LABEL = {ROUND_LABEL!r};")
@@ -190,6 +201,32 @@ def main():
 
     html.append(r"""
 let videos = [];
+
+// flag-icons CDN（4x3 SVG）
+const FLAG_CDN_BASE = "https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.5.0/flags/4x3";
+
+// 国名→ISO alpha-2 の最低限マップ
+// ※表記ゆれや非ISOはここで救う
+const COUNTRY_CODE_OVERRIDE = {
+  "United States of America": "us",
+  "USA": "us",
+  "United Kingdom": "gb",
+  "Russia": "ru",
+  "Republic of Korea": "kr",
+  "South Korea": "kr",
+  "Korea": "kr",
+  "Japan": "jp",
+  "China": "cn",
+  "Poland": "pl",
+  "Canada": "ca",
+  "Malaysia": "my",
+  "Georgia": "ge",
+
+  // よく出そうな非ISO/別称の救済例（必要に応じて足してね）
+  "Chinese Taipei": "tw",
+  "Taiwan": "tw",
+  "Hong Kong, China": "hk"
+};
 
 function toIntSafe(v, def=0){
   const n = parseInt(v, 10);
@@ -200,17 +237,46 @@ function formatNumber(n){
   return (n === null || n === undefined) ? "" : Number(n).toLocaleString("ja-JP");
 }
 
-function getFlagFilename(country){
-  const mapping = {
-    "United States of America": "usa.png",
-    "Canada": "canada.png",
-    "China": "china.png",
-    "Japan": "japan.png",
-    "Poland": "poland.png",
-    "Malaysia": "malaysia.png",
-    "Georgia": "georgia.png",
-  };
-  return mapping[country] || "";
+function formatRatio(x){
+  if (x === null || x === undefined || !Number.isFinite(x)) return "";
+  return (x*100).toLocaleString("ja-JP", {maximumFractionDigits:2}) + "%";
+}
+
+// 国名文字列を / で分割して配列に
+function splitCountries(countryStr){
+  if (!countryStr) return [];
+  return countryStr.split("/").map(s=>s.trim()).filter(Boolean);
+}
+
+// 国名→コードを引く（なければ空）
+function getCountryCode(countryName){
+  if (!countryName) return "";
+  if (COUNTRY_CODE_OVERRIDE[countryName]) return COUNTRY_CODE_OVERRIDE[countryName];
+
+  // すでに "jp" みたいなコードが来てたら使う保険（2文字英字のみ）
+  const maybe = countryName.trim().toLowerCase();
+  if (/^[a-z]{2}$/.test(maybe)) return maybe;
+
+  return "";
+}
+
+// 国旗HTML生成（複数旗対応）
+function makeFlagsHtml(countryStr){
+  const parts = splitCountries(countryStr);
+  if (parts.length === 0) return "";
+
+  const imgs = parts.map(name=>{
+    const code = getCountryCode(name);
+    if (!code) return null;
+    const src = `${FLAG_CDN_BASE}/${code}.svg`;
+    return `<img src="${src}" class="flag-icon" alt="${name}" title="${name}">`;
+  }).filter(Boolean);
+
+  if (imgs.length > 0){
+    return `<span class="flags-wrap">${imgs.join("")}</span>`;
+  }
+  // どれも旗にできなかったら国名テキスト
+  return countryStr;
 }
 
 function makePianistSortKey(name){
@@ -259,10 +325,7 @@ function renderTable(list){
     const thumb = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
     const link = v.url;
 
-    let countryHtml = v.country;
-    if (v.flagPath){
-      countryHtml = `<img src="${v.flagPath}" class="flag-icon" alt="${v.country}" title="${v.country}">`;
-    }
+    const countryHtml = makeFlagsHtml(v.country);
 
     tr.innerHTML = `
       <td>${v.pianist}</td>
@@ -270,6 +333,7 @@ function renderTable(list){
       <td class="num-col">${v.ageYears ?? ""}</td>
       <td class="num-col">${formatNumber(v.viewCount)}</td>
       <td class="num-col">${formatNumber(v.likeCount)}</td>
+      <td class="num-col">${formatRatio(v.likeRatio)}</td>
       <td class="rank-col">${v.finalResult}</td>
       <td><a href="${link}" target="_blank"><img src="${thumb}" class="thumb-img"></a></td>
     `;
@@ -308,9 +372,11 @@ function sortAndRender(key, dir, type){
     const va = a[key];
     const vb = b[key];
     if (type==="number"){
-      const na = Number(va)||0;
-      const nb = Number(vb)||0;
-      return (dir==="asc") ? na-nb : nb-na;
+      const na = Number(va);
+      const nb = Number(vb);
+      const safeA = Number.isFinite(na) ? na : -Infinity;
+      const safeB = Number.isFinite(nb) ? nb : -Infinity;
+      return (dir==="asc") ? safeA-safeB : safeB-safeA;
     }
     return (dir==="asc")
       ? String(va||"").localeCompare(String(vb||""),"ja")
@@ -356,8 +422,11 @@ async function loadAndBuild(){
     if (!st) unmatched++;
 
     const fr = determineFinalResult(c);
-    const flag = getFlagFilename(c["国"]||"");
     const age = calcAge(c["生年月日"]||"");
+
+    const viewCount = st ? st.viewCount : 0;
+    const likeCount = st ? st.likeCount : 0;
+    const likeRatio = (viewCount > 0) ? (likeCount / viewCount) : null;
 
     return {
       videoId: vid,
@@ -365,13 +434,13 @@ async function loadAndBuild(){
       pianist: c["名前"]||"",
       pianistSortKey: makePianistSortKey(c["名前"]||""),
       country: c["国"]||"",
-      flagPath: flag ? `img/flag/${flag}`:"",
       finalResult: fr.text,
       finalSortCategory: fr.category,
       finalSortRankNum: fr.rankNum,
       finalSortPrize: fr.prizeOrder,
-      viewCount: st ? st.viewCount:0,
-      likeCount: st ? st.likeCount:0,
+      viewCount,
+      likeCount,
+      likeRatio,
       birthDate: age.birthForSort,
       ageYears: age.age
     };
@@ -406,7 +475,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     HTML_PATH.write_text("\n".join(html), encoding="utf-8")
     print(f"{HTML_PATH} を更新しました。")
-
 
 if __name__ == "__main__":
     main()
