@@ -36,3 +36,31 @@
   z-index: 6;
   background: #f0f0f0;
 }
+
+/* ===== sticky を殺しがちな minimal/親要素の癖を無力化 ===== */
+
+/* ページ全体で overflow-x: hidden 等があると sticky が死ぬことがある */
+html, body {
+  overflow: visible !important;
+  overflow-x: visible !important;
+}
+
+/* minimal の main や container が transform を持つと sticky が死ぬ */
+.page-header,
+.main-content,
+.wrapper,
+.container,
+.inner,
+.content {
+  transform: none !important;
+}
+
+/* 万一どこかに overflow:hidden が残ってた時の保険 */
+.page-header,
+.main-content,
+.wrapper,
+.container,
+.inner,
+.content {
+  overflow: visible !important;
+}
