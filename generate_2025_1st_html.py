@@ -1,272 +1,56 @@
 #!/usr/bin/env python
-import json
-from datetime import datetime
 from pathlib import Path
 
-# ★ 統合JSON（単一dict）を参照
-JSON_PATH = Path("all_rounds_view_count.json")
 HTML_PATH = Path("2025_1st.html")
-COMPETITORS_PATH = Path("competitors.json")
 
-CONTEST_REF_DATE = datetime(2025, 10, 1)
-
+# ラウンド設定
 ROUND_KEY = "第1"
 ROUND_LABEL = "第1ラウンド"
 
-
-def load_latest_videos():
-    """
-    all_rounds_view_count.json のスキーマ（単一dict）に合わせて読む。
-    {
-      "date": "YYYY-MM-DD",
-      "videos": {
-         "<videoId>": {"viewCount":..., "likeCount":...},
-         ...
-      },
-      "rounds": {...}
-    }
-    """
-    if not JSON_PATH.exists():
-        raise FileNotFoundError(f"{JSON_PATH} が見つかりません。パスを確認してください。")
-
-    with JSON_PATH.open("r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    if not isinstance(data, dict):
-        raise ValueError(f"{JSON_PATH.name} の最上位は dict を想定しています。")
-
-    target_date = data.get("date", "")
-    videos_map = data.get("videos", {})
-    if not isinstance(videos_map, dict):
-        raise ValueError("'videos' が dict ではないようです。")
-
-    return target_date, videos_map
-
-
-def load_competitors():
-    if not COMPETITORS_PATH.exists():
-        return []
-
-    with COMPETITORS_PATH.open("r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    if not isinstance(data, list):
-        raise ValueError("competitors.json の最上位はリスト形式を想定しています。")
-
-    return data
-
-
-def to_int_safe(value, default=0):
-    try:
-        return int(value)
-    except Exception:
-        return default
-
-
-def get_flag_filename(country: str) -> str:
-    mapping = {
-        "United States of America": "usa.png",
-        "Canada": "canada.png",
-        "China": "china.png",
-        "Japan": "japan.png",
-        "Poland": "poland.png",
-        "Malaysia": "malaysia.png",
-        "Georgia": "georgia.png",
-    }
-    return mapping.get(country, "")
-
-
-def make_pianist_sort_key(name: str) -> str:
-    if not name:
-        return ""
-    parts = name.strip().split()
-    if not parts:
-        return ""
-    if len(parts) == 1:
-        return parts[0].lower()
-    last = parts[-1].lower()
-    rest = " ".join(parts[:-1]).lower()
-    return f"{last}, {rest}"
-
-
-def determine_final_result(comp):
-    fr_raw = comp.get("最終順位", "")
-    prize = comp.get("賞", "") or ""
-    has_final = bool(comp.get("ファイナル"))
-    has_3 = bool(comp.get("第3"))
-    has_2 = bool(comp.get("第2"))
-
-    if fr_raw not in ("", None):
-        rank_num = to_int_safe(fr_raw, 999)
-        if prize:
-            text = f"{rank_num}位、{prize}"
-        else:
-            text = f"{rank_num}位"
-        category = 0
-        prize_order = 0 if prize else 1
-        return text, category, rank_num, prize_order
-
-    if has_final:
-        text = "ファイナリスト"
-        category = 1
-        return text, category, 999, 1
-
-    if has_3:
-        text = "第3ラウンド進出"
-        category = 2
-        return text, category, 999, 1
-
-    if has_2:
-        text = "第2ラウンド進出"
-        category = 3
-        return text, category, 999, 1
-
-    text = "-"
-    category = 4
-    return text, category, 999, 1
-
-
-def calc_age_from_birthdate(birth_str: str, ref_dt: datetime):
-    if not birth_str or not ref_dt:
-        return None, ""
-    try:
-        birth = datetime.fromisoformat(birth_str).date()
-    except Exception:
-        return None, ""
-    ref_date = ref_dt.date()
-    age = ref_date.year - birth.year
-    if (ref_date.month, ref_date.day) < (birth.month, birth.day):
-        age -= 1
-    return age, birth_str
-
+# 参照日（年齢計算基準）
+CONTEST_REF_DATE_ISO = "2025-10-01"
 
 def main():
-    target_date, videos_map = load_latest_videos()
-    competitors_raw = load_competitors()
-
-    try:
-        dt = datetime.fromisoformat(target_date)
-        weekday_ja = "月火水木金土日"[dt.weekday()]
-        target_date_jp = dt.strftime("%Y年%m月%d日") + f"({weekday_ja})"
-    except Exception:
-        target_date_jp = target_date
-
-    videos = []
-    unmatched_count = 0
-
-    # competitors.json の「第1」列がある人だけ
-    round_players = [c for c in competitors_raw if c.get(ROUND_KEY)]
-
-    for comp in round_players:
-        video_id = comp.get(ROUND_KEY, "")
-
-        # 統合JSONの videos は dict: {videoId: {viewCount, likeCount}}
-        stats = videos_map.get(video_id)
-        if stats is None:
-            unmatched_count += 1
-            stats = {}
-
-        pianist = comp.get("名前", "") or ""
-        country = comp.get("国", "") or ""
-
-        final_result_text, cat, rank_num, prize_order = determine_final_result(comp)
-
-        flag_file = get_flag_filename(country)
-        flag_path = f"img/flag/{flag_file}" if flag_file else ""
-
-        pianist_sort_key = make_pianist_sort_key(pianist)
-
-        birth_str = comp.get("生年月日", "") or ""
-        age_years, birth_for_sort = calc_age_from_birthdate(birth_str, CONTEST_REF_DATE)
-
-        videos.append(
-            {
-                "videoId": video_id,
-                "url": f"https://www.youtube.com/watch?v={video_id}",
-                "publishedAt": "",  # 統合JSONに無いので空
-                "viewCount": to_int_safe(stats.get("viewCount")),
-                "likeCount": to_int_safe(stats.get("likeCount")),
-                "pianist": pianist,
-                "pianistSortKey": pianist_sort_key,
-                "country": country,
-                "finalResult": final_result_text,
-                "finalSortCategory": cat,
-                "finalSortRankNum": rank_num,
-                "finalSortPrize": prize_order,
-                "flagPath": flag_path,
-                "birthDate": birth_for_sort,
-                "ageYears": age_years,
-            }
-        )
-
-    videos_json_safe = json.dumps(videos, ensure_ascii=False).replace("</", "<\\/")
-
     html = []
     html.append("<!DOCTYPE html>")
     html.append('<html lang="ja">')
     html.append("  <head>")
     html.append('    <meta charset="UTF-8">')
-    html.append(
-        "    <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025第1ラウンド集計</title>"
-    )
-    html.append(
-        '    <meta name="description" content="ショパン国際ピアノコンクール2025第1ラウンドのYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。">'
-    )
+    html.append("    <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025第1ラウンド集計</title>")
+    html.append('    <meta name="description" content="ショパン国際ピアノコンクール2025第1ラウンドのYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。">')
     html.append('    <link rel="preconnect" href="https://fonts.gstatic.com">')
-    html.append(
-        '    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>'
-    )
+    html.append('    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>')
     html.append('    <meta name="viewport" content="width=device-width, initial-scale=1">')
     html.append('    <meta name="theme-color" content="#157878">')
-    html.append(
-        '    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">'
-    )
-    html.append(
-        '    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css?v=76ba7eec5aa7918590041e6c94a14363f6b580e6">'
-    )
+    html.append('    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">')
+    html.append('    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css?v=76ba7eec5aa7918590041e6c94a14363f6b580e6">')
     html.append("    <style>")
-    html.append(
-        "      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }"
-    )
+    html.append("      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }")
     html.append("      th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }")
     html.append("      th { background: #f0f0f0; }")
     html.append("      tbody tr:nth-child(even) { background: #fafafa; }")
     html.append("      .num-col { text-align: right; white-space: nowrap; }")
     html.append("      .rank-col { text-align: right; white-space: nowrap; }")
-    html.append(
-        "      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }"
-    )
+    html.append("      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }")
     html.append("      .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }")
     html.append("      .sort-icon.active { color: #000; font-weight: bold; }")
-    html.append(
-        "      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }"
-    )
-    html.append(
-        "      .thumb-img { width: 120px; aspect-ratio: 16/9; object-fit: cover; display: block; }"
-    )
+    html.append("      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }")
+    html.append("      .thumb-img { width: 120px; aspect-ratio: 16/9; object-fit: cover; display: block; }")
+    html.append("      .muted { color:#777; font-size:0.85rem; }")
     html.append("    </style>")
     html.append("  </head>")
     html.append("  <body>")
     html.append('    <a id="skip-to-content" href="#content">Skip to the content.</a>')
     html.append('    <header class="page-header" role="banner">')
-    html.append(
-        '      <h1 class="project-name"><a href="/chopin-competition/" style="color:#fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a></h1>'
-    )
-    html.append(
-        '      <h2 class="project-tagline">ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。順位と関係なく再生回数が伸びているコンテスタントの存在が気になってしまったのでまとめました🥰</h2>'
-    )
+    html.append('      <h1 class="project-name"><a href="/chopin-competition/" style="color:#fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a></h1>')
+    html.append('      <h2 class="project-tagline">ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。順位と関係なく再生回数が伸びているコンテスタントの存在が気になってしまったのでまとめました🥰</h2>')
     html.append("    </header>")
     html.append('    <main id="content" class="main-content" role="main">')
 
-    if unmatched_count > 0:
-        html.append(
-            f'      <p style="color:#777;font-size:0.85rem;">※ {unmatched_count} 本は再生数データが見つかりませんでした（再生回数などが 0 として表示されます）。</p>'
-        )
-
-    html.append("      <h1>第19回(2025)ショパン国際ピアノコンクール 第1ラウンド再生数ランキング</h1>")
-    html.append(
-        f"      <p>集計日: {target_date_jp} ／ 対象動画数: {len(videos)} 本 ／ 年齢は2025年10月1日時点</p>"
-    )
+    # 単なる器（中身はJSが入れる）
+    html.append(f"      <h1>第19回(2025)ショパン国際ピアノコンクール {ROUND_LABEL}再生数ランキング</h1>")
+    html.append('      <p id="summary-line" class="muted">読み込み中…</p>')
+    html.append('      <p id="unmatched-line" class="muted"></p>')
 
     html.append("      <table>")
     html.append("        <thead>")
@@ -324,18 +108,86 @@ def main():
     html.append("        </thead>")
     html.append("        <tbody id='ranking-body'></tbody>")
     html.append("      </table>")
+
     html.append('      <footer class="site-footer">')
     html.append('          <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>')
     html.append("      </footer>")
     html.append("    </main>")
 
+    # JS本体（fetchして加工・描画）
     html.append("    <script>")
-    html.append(f"const videos = {videos_json_safe};")
+    html.append(f"const ROUND_KEY = {ROUND_KEY!r};")
+    html.append(f"const ROUND_LABEL = {ROUND_LABEL!r};")
+    html.append(f"const CONTEST_REF_DATE_ISO = {CONTEST_REF_DATE_ISO!r};")
+
     html.append(
-        r"""
+r"""
+let videos = []; // 動的に作る
+
+function toIntSafe(v, def=0){
+  const n = parseInt(v, 10);
+  return Number.isFinite(n) ? n : def;
+}
+
 function formatNumber(n){
   if (n === null || n === undefined) return '';
-  return n.toLocaleString('ja-JP');
+  return Number(n).toLocaleString('ja-JP');
+}
+
+function getFlagFilename(country){
+  const mapping = {
+    "United States of America": "usa.png",
+    "Canada": "canada.png",
+    "China": "china.png",
+    "Japan": "japan.png",
+    "Poland": "poland.png",
+    "Malaysia": "malaysia.png",
+    "Georgia": "georgia.png",
+  };
+  return mapping[country] || "";
+}
+
+function makePianistSortKey(name){
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].toLowerCase();
+  const last = parts[parts.length-1].toLowerCase();
+  const rest = parts.slice(0, -1).join(" ").toLowerCase();
+  return `${last}, ${rest}`;
+}
+
+function determineFinalResult(comp){
+  const frRaw = comp["最終順位"];
+  const prize = comp["賞"] || "";
+  const hasFinal = Boolean(comp["ファイナル"]);
+  const has3 = Boolean(comp["第3"]);
+  const has2 = Boolean(comp["第2"]);
+
+  if (frRaw !== "" && frRaw !== null && frRaw !== undefined){
+    const rankNum = toIntSafe(frRaw, 999);
+    const text = prize ? `${rankNum}位、${prize}` : `${rankNum}位`;
+    const category = 0;
+    const prizeOrder = prize ? 0 : 1;
+    return { text, category, rankNum, prizeOrder };
+  }
+  if (hasFinal) return { text:"ファイナリスト", category:1, rankNum:999, prizeOrder:1 };
+  if (has3)     return { text:"第3ラウンド進出", category:2, rankNum:999, prizeOrder:1 };
+  if (has2)     return { text:"第2ラウンド進出", category:3, rankNum:999, prizeOrder:1 };
+  return { text:"-", category:4, rankNum:999, prizeOrder:1 };
+}
+
+function calcAgeFromBirthdate(birthStr, refIso){
+  if (!birthStr || !refIso) return { age:null, birthForSort:"" };
+  const birth = new Date(birthStr);
+  if (Number.isNaN(birth.getTime())) return { age:null, birthForSort:"" };
+
+  const ref = new Date(refIso);
+  let age = ref.getFullYear() - birth.getFullYear();
+  const mDiff = ref.getMonth() - birth.getMonth();
+  if (mDiff < 0 || (mDiff === 0 && ref.getDate() < birth.getDate())){
+    age -= 1;
+  }
+  return { age, birthForSort: birthStr };
 }
 
 function renderTable(list){
@@ -353,9 +205,8 @@ function renderTable(list){
     }
 
     const thumbUrl = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
-    const videoUrl  = v.url || `https://www.youtube.com/watch?v=${v.videoId}`;
-
-    const ageText = (v.ageYears !== null && v.ageYears !== undefined) ? v.ageYears : '';
+    const videoUrl = v.url || `https://www.youtube.com/watch?v=${v.videoId}`;
+    const ageText  = (v.ageYears !== null && v.ageYears !== undefined) ? v.ageYears : '';
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -437,21 +288,106 @@ function setupSortIcons(){
     icon.addEventListener('click',()=>{
       icons.forEach(i=>i.classList.remove('active'));
       icon.classList.add('active');
-      const key = icon.getAttribute('data-key');
-      const dir = icon.getAttribute('data-dir');
+      const key  = icon.getAttribute('data-key');
+      const dir  = icon.getAttribute('data-dir');
       const type = icon.getAttribute('data-type') || 'number';
       sortAndRender(key, dir, type);
     });
   });
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
+function formatTargetDateJp(iso){
+  try{
+    const dt = new Date(iso);
+    const weekdayJa = "月火水木金土日"[dt.getDay() === 0 ? 6 : dt.getDay()-1]; // JS:0日〜6土
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth()+1).padStart(2,"0");
+    const d = String(dt.getDate()).padStart(2,"0");
+    return `${y}年${m}月${d}日(${weekdayJa})`;
+  }catch(e){
+    return iso;
+  }
+}
+
+async function loadDataAndBuild(){
+  const [roundRes, compRes] = await Promise.all([
+    fetch("all_rounds_view_count.json", { cache:"no-store" }),
+    fetch("competitors.json", { cache:"no-store" }),
+  ]);
+
+  if(!roundRes.ok) throw new Error("all_rounds_view_count.json が読めません");
+  if(!compRes.ok) throw new Error("competitors.json が読めません");
+
+  const roundData = await roundRes.json();
+  const competitors = await compRes.json();
+
+  const targetDate = roundData["date"] || "";
+  const videosMap  = roundData["videos"] || {};
+
+  let unmatchedCount = 0;
+
+  // 第1ラウンド対象者だけ
+  const roundPlayers = competitors.filter(c=>c[ROUND_KEY]);
+
+  videos = roundPlayers.map(comp=>{
+    const videoId = comp[ROUND_KEY];
+    const stats   = videosMap[videoId] || null;
+    if (!stats) unmatchedCount += 1;
+
+    const pianist = comp["名前"] || "";
+    const country = comp["国"] || "";
+
+    const fr = determineFinalResult(comp);
+    const flagFile = getFlagFilename(country);
+    const flagPath = flagFile ? `img/flag/${flagFile}` : "";
+
+    const pianistSortKey = makePianistSortKey(pianist);
+    const birthStr = comp["生年月日"] || "";
+    const ageObj = calcAgeFromBirthdate(birthStr, CONTEST_REF_DATE_ISO);
+
+    return {
+      videoId,
+      url: `https://www.youtube.com/watch?v=${videoId}`,
+      viewCount: toIntSafe(stats?.viewCount),
+      likeCount: toIntSafe(stats?.likeCount),
+      pianist,
+      pianistSortKey,
+      country,
+      finalResult: fr.text,
+      finalSortCategory: fr.category,
+      finalSortRankNum: fr.rankNum,
+      finalSortPrize: fr.prizeOrder,
+      flagPath,
+      birthDate: ageObj.birthForSort,
+      ageYears: ageObj.age,
+    };
+  });
+
+  // summary 表示
+  const summaryLine = document.getElementById("summary-line");
+  summaryLine.textContent =
+    `集計日: ${formatTargetDateJp(targetDate)} ／ 対象動画数: ${videos.length} 本 ／ 年齢は2025年10月1日時点`;
+
+  const unmatchedLine = document.getElementById("unmatched-line");
+  if (unmatchedCount > 0){
+    unmatchedLine.textContent =
+      `※ ${unmatchedCount} 本は再生数データが見つかりませんでした（再生回数などが 0 として表示されます）。`;
+  } else {
+    unmatchedLine.textContent = "";
+  }
+
   setupSortIcons();
   const defaultIcon = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
-  if(defaultIcon){
-    defaultIcon.classList.add('active');
-  }
+  if(defaultIcon) defaultIcon.classList.add('active');
   sortAndRender('viewCount','desc','number');
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadDataAndBuild().catch(err=>{
+    console.error(err);
+    document.getElementById("summary-line").textContent =
+      "データの読み込みに失敗しました。JSONの場所や名前を確認してください。";
+  });
 });
 """
     )
@@ -461,7 +397,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
     HTML_PATH.write_text("\n".join(html), encoding="utf-8")
     print(f"{HTML_PATH} を更新しました。")
-
 
 if __name__ == "__main__":
     main()
