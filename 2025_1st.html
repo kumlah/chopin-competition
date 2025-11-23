@@ -1,396 +1,584 @@
-
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025第1ラウンド集計</title>
-    <meta name="description" content="ショパン国際ピアノコンクール2025第1ラウンドのYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#157878">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css">
+    <meta
+      name="description"
+      content="ショパン国際ピアノコンクール2025第1ラウンドのYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap"
+      as="style"
+      type="text/css"
+      crossorigin
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#157878" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css" />
+
     <style>
-      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-      th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }
-      th { background: #f0f0f0; }
-      tbody tr:nth-child(even) { background: #fafafa; }
-      .num-col { text-align: right; white-space: nowrap; }
-      .rank-col { text-align: right; white-space: nowrap; }
-      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }
-      .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }
-      .sort-icon.active { color: #000; font-weight: bold; }
-      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }
-      .flags-wrap { display: inline-flex; gap: 2px; align-items: center; }
-      .thumb-img { width: 120px; aspect-ratio: 16/9; object-fit: cover; display: block; }
-      .muted { color:#777; font-size:0.85rem; }
-      .table-wrap{
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 0.4rem 0.5rem;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      tbody tr:nth-child(even) {
+        background: #fafafa;
+      }
+      .num-col {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .rank-col {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .sort-icons {
+        margin-left: 0.25rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+      .sort-icon {
+        cursor: pointer;
+        margin-left: 0.1rem;
+        color: #888;
+      }
+      .sort-icon.active {
+        color: #000;
+        font-weight: bold;
+      }
+      .flag-icon {
+        width: 20px;
+        height: 14px;
+        object-fit: cover;
+        vertical-align: middle;
+      }
+      .flags-wrap {
+        display: inline-flex;
+        gap: 2px;
+        align-items: center;
+      }
+      .thumb-img {
+        width: 120px;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        display: block;
+      }
+      .muted {
+        color: #777;
+        font-size: 0.85rem;
+      }
+      .table-wrap {
         width: 100%;
         height: 80vh;
         overflow: auto;
         border: 1px solid #ddd;
         position: relative;
       }
-      .table-wrap thead th{
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 5;
-        background: #f0f0f0;
-      }
-      .table-wrap th:first-child,
-      .table-wrap td:first-child{
-        position: sticky !important;
-        left: 0 !important;
-        z-index: 4;
-        background: #fff;
-      }
-      .table-wrap thead th:first-child{
-        z-index: 6;
-        background: #f0f0f0;
-      }
     </style>
   </head>
+
   <body>
     <a id="skip-to-content" href="#content">Skip to the content.</a>
+
     <header class="page-header" role="banner">
-      <h1 class="project-name"><a href="/chopin-competition/" style="color:#fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a></h1>
-      <h2 class="project-tagline">ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。</h2>
+      <h1 class="project-name">
+        <a href="/chopin-competition/" style="color: #fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a>
+      </h1>
+      <h2 class="project-tagline">
+        ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。
+      </h2>
     </header>
+
     <main id="content" class="main-content" role="main">
       <h1>第19回(2025)ショパン国際ピアノコンクール 第1ラウンド再生数ランキング</h1>
       <p id="summary-line" class="muted">読み込み中…</p>
       <p id="unmatched-line" class="muted"></p>
+
       <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>名前              <span class='sort-icons'>                <span class='sort-icon' data-key='pianistSortKey' data-dir='asc' data-type='string'>▲</span>                <span class='sort-icon' data-key='pianistSortKey' data-dir='desc' data-type='string'>▼</span>              </span>            </th>
-            <th style='width:6em;'>国              <span class='sort-icons'>                <span class='sort-icon' data-key='country' data-dir='asc' data-type='string'>▲</span>                <span class='sort-icon' data-key='country' data-dir='desc' data-type='string'>▼</span>              </span>            </th>
-            <th style='width:5em;'>年齢              <span class='sort-icons'>                <span class='sort-icon' data-key='age' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='age' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:8em;'>再生回数              <span class='sort-icons'>                <span class='sort-icon' data-key='viewCount' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='viewCount' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:8em;'>高評価数              <span class='sort-icons'>                <span class='sort-icon' data-key='likeCount' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='likeCount' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:8em;'>高評価率              <span class='sort-icons'>                <span class='sort-icon' data-key='likeRatio' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='likeRatio' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:8em;'>最終結果              <span class='sort-icons'>                <span class='sort-icon' data-key='finalSortCategory' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='finalSortCategory' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:11em;'>動画</th>
-          </tr>
-        </thead>
-        <tbody id='ranking-body'></tbody>
-      </table>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                名前
+                <span class="sort-icons">
+                  <span
+                    class="sort-icon"
+                    data-key="pianistSortKey"
+                    data-dir="asc"
+                    data-type="string"
+                    >▲</span
+                  >
+                  <span
+                    class="sort-icon"
+                    data-key="pianistSortKey"
+                    data-dir="desc"
+                    data-type="string"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 6em;">
+                国
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="country" data-dir="asc" data-type="string"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="country" data-dir="desc" data-type="string"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 5em;">
+                年齢
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="age" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="age" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 8em;">
+                再生回数
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="viewCount" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="viewCount" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 8em;">
+                高評価数
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="likeCount" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="likeCount" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 8em;">
+                高評価率
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="likeRatio" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="likeRatio" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 8em;">
+                最終結果
+                <span class="sort-icons">
+                  <span
+                    class="sort-icon"
+                    data-key="finalSortCategory"
+                    data-dir="asc"
+                    data-type="number"
+                    >▲</span
+                  >
+                  <span
+                    class="sort-icon"
+                    data-key="finalSortCategory"
+                    data-dir="desc"
+                    data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 11em;">動画</th>
+            </tr>
+          </thead>
+
+          <tbody id="ranking-body"></tbody>
+        </table>
       </div>
+
       <footer class="site-footer">
-          <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>
+        <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>
       </footer>
     </main>
+
     <script>
-const ROUND_KEY = '第1';
-const ROUND_LABEL = '第1ラウンド';
-const CONTEST_REF_DATE_ISO = '2025-10-01';
+      const ROUND_KEY = "第1";
+      const ROUND_LABEL = "第1ラウンド";
+      const CONTEST_REF_DATE_ISO = "2025-10-01";
 
-let videos = [];
+      let videos = [];
 
-// flag-icons CDN（4x3 SVG）
-const FLAG_CDN_BASE = "https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.5.0/flags/4x3";
+      // flag-icons CDN（4x3 SVG）
+      const FLAG_CDN_BASE =
+        "https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.5.0/flags/4x3";
 
-// 国名→ISO alpha-2 の最低限マップ
-const COUNTRY_CODE_OVERRIDE = {
-  "Bulgaria": "bg",
-  "Canada": "ca",
-  "China": "cn",
-  "Czechia": "cz",
-  "France": "fr",
-  "Georgia": "ge",
-  "Germany": "de",
-  "Hong Kong": "hk",
-  "Italy": "it",
-  "Japan": "jp",
-  "Malaysia": "my",
-  "Poland": "pl",
-  "Republic of Korea": "kr",
-  "Spain": "es",
-  "United Kingdom of Great Britain and Northern Ireland": "gb",
-  "United States of America": "us",
-  "Portugal": "pt",
-  "Vietnam": "vn"
-};
+      // 国名→ISO alpha-2 の最低限マップ
+      const COUNTRY_CODE_OVERRIDE = {
+        Bulgaria: "bg",
+        Canada: "ca",
+        China: "cn",
+        Czechia: "cz",
+        France: "fr",
+        Georgia: "ge",
+        Germany: "de",
+        Hong Kong: "hk",
+        Italy: "it",
+        Japan: "jp",
+        Malaysia: "my",
+        Poland: "pl",
+        "Republic of Korea": "kr",
+        Spain: "es",
+        "United Kingdom of Great Britain and Northern Ireland": "gb",
+        "United States of America": "us",
+        Portugal: "pt",
+        Vietnam: "vn"
+      };
 
-function toIntSafe(v, def=0){
-  const n = parseInt(v, 10);
-  return Number.isFinite(n) ? n : def;
-}
+      function toIntSafe(v, def = 0) {
+        const n = parseInt(v, 10);
+        return Number.isFinite(n) ? n : def;
+      }
 
-function formatNumber(n){
-  return (n === null || n === undefined) ? "" : Number(n).toLocaleString("ja-JP");
-}
+      function formatNumber(n) {
+        return n === null || n === undefined
+          ? ""
+          : Number(n).toLocaleString("ja-JP");
+      }
 
-function formatRatio(x){
-  if (x === null || x === undefined || !Number.isFinite(x)) return "";
-  return (x*100).toLocaleString("ja-JP", {maximumFractionDigits:2}) + "%";
-}
+      function formatRatio(x) {
+        if (x === null || x === undefined || !Number.isFinite(x)) return "";
+        return (
+          (x * 100).toLocaleString("ja-JP", { maximumFractionDigits: 2 }) + "%"
+        );
+      }
 
-function splitCountries(countryStr){
-  if (!countryStr) return [];
-  return countryStr.split("/").map(s=>s.trim()).filter(Boolean);
-}
+      function splitCountries(countryStr) {
+        if (!countryStr) return [];
+        return countryStr
+          .split("/")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
 
-function getCountryCode(countryName){
-  if (!countryName) return "";
-  if (COUNTRY_CODE_OVERRIDE[countryName]) return COUNTRY_CODE_OVERRIDE[countryName];
-  const maybe = countryName.trim().toLowerCase();
-  if (/^[a-z]{2}$/.test(maybe)) return maybe;
-  return "";
-}
+      function getCountryCode(countryName) {
+        if (!countryName) return "";
+        if (COUNTRY_CODE_OVERRIDE[countryName])
+          return COUNTRY_CODE_OVERRIDE[countryName];
 
-function makeFlagsHtml(countryStr){
-  const parts = splitCountries(countryStr);
-  if (parts.length === 0) return "";
+        const maybe = countryName.trim().toLowerCase();
+        if (/^[a-z]{2}$/.test(maybe)) return maybe;
 
-  const imgs = parts.map(name=>{
-    const code = getCountryCode(name);
-    if (!code) return null;
-    const src = `${FLAG_CDN_BASE}/${code}.svg`;
-    return `<img src="${src}" class="flag-icon" alt="${name}" title="${name}">`;
-  }).filter(Boolean);
+        return "";
+      }
 
-  if (imgs.length > 0){
-    return `<span class="flags-wrap">${imgs.join("")}</span>`;
-  }
-  return countryStr;
-}
+      function makeFlagsHtml(countryStr) {
+        const parts = splitCountries(countryStr);
+        if (parts.length === 0) return "";
 
-function makePianistSortKey(name){
-  if (!name) return "";
-  const p = name.trim().split(/\s+/);
-  if (p.length === 1) return p[0].toLowerCase();
-  const last = p[p.length - 1].toLowerCase();
-  const rest = p.slice(0, -1).join(" ").toLowerCase();
-  return `${last}, ${rest}`;
-}
+        const imgs = parts
+          .map((name) => {
+            const code = getCountryCode(name);
+            if (!code) return null;
 
-/**
- * 最終結果とソート用カテゴリを作る
- * - 賞があれば必ず併記
- * - category / rankNum / hasPrize を返す
- */
-function determineFinalResult(c){
-  const frRaw = c["最終順位"];
-  const prize = (c["賞"] || "").trim();
-  const hasPrize = prize !== "";
-  const hasFinal = Boolean(c["ファイナル"]);
-  const has3 = Boolean(c["第3"]);
-  const has2 = Boolean(c["第2"]);
+            const src = `${FLAG_CDN_BASE}/${code}.svg`;
+            return `<img src="${src}" class="flag-icon" alt="${name}" title="${name}">`;
+          })
+          .filter(Boolean);
 
-  // 1) 順位つき
-  if (frRaw !== "" && frRaw !== null && frRaw !== undefined){
-    const rankNum = toIntSafe(frRaw, 999);
-    const baseText = `${rankNum}位`;
-    const text = hasPrize ? `${baseText}、${prize}` : baseText;
-    return {
-      text,
-      category: 0,
-      rankNum,
-      hasPrizeSort: hasPrize ? 0 : 1  // 0が上
-    };
-  }
+        if (imgs.length > 0) {
+          return `<span class="flags-wrap">${imgs.join("")}</span>`;
+        }
 
-  // 2) ラウンド進出
-  let baseText = "-";
-  let category = 4;
+        return countryStr;
+      }
 
-  if (hasFinal){
-    baseText = "ファイナリスト";
-    category = 1;
-  } else if (has3){
-    baseText = "第3ラウンド進出";
-    category = 2;
-  } else if (has2){
-    baseText = "第2ラウンド進出";
-    category = 3;
-  }
+      function makePianistSortKey(name) {
+        if (!name) return "";
+        const p = name.trim().split(/\s+/);
+        if (p.length === 1) return p[0].toLowerCase();
 
-  const text = hasPrize ? `${baseText}、${prize}` : baseText;
+        const last = p[p.length - 1].toLowerCase();
+        const rest = p.slice(0, -1).join(" ").toLowerCase();
+        return `${last}, ${rest}`;
+      }
 
-  return {
-    text,
-    category,
-    rankNum: 999,
-    hasPrizeSort: hasPrize ? 0 : 1
-  };
-}
+      /**
+       * 最終結果とソート用カテゴリを作る
+       * - 賞があれば必ず併記
+       * - category / rankNum / hasPrize を返す
+       */
+      function determineFinalResult(c) {
+        const frRaw = c["最終順位"];
+        const prize = (c["賞"] || "").trim();
+        const hasPrize = prize !== "";
+        const hasFinal = Boolean(c["ファイナル"]);
+        const has3 = Boolean(c["第3"]);
+        const has2 = Boolean(c["第2"]);
 
-function calcAge(birthStr){
-  if (!birthStr) return {age:null, birthForSort:""};
-  const b = new Date(birthStr);
-  if (Number.isNaN(b.getTime())) return {age:null, birthForSort:""};
-  const r = new Date(CONTEST_REF_DATE_ISO);
-  let age = r.getFullYear() - b.getFullYear();
-  const md = r.getMonth() - b.getMonth();
-  if (md < 0 || (md===0 && r.getDate() < b.getDate())) age--;
-  return { age, birthForSort:birthStr };
-}
+        // 1) 順位つき
+        if (frRaw !== "" && frRaw !== null && frRaw !== undefined) {
+          const rankNum = toIntSafe(frRaw, 999);
+          const baseText = `${rankNum}位`;
+          const text = hasPrize ? `${baseText}、${prize}` : baseText;
 
-function renderTable(list){
-  const tbody = document.getElementById("ranking-body");
-  tbody.innerHTML = "";
+          return {
+            text,
+            category: 0,
+            rankNum,
+            hasPrizeSort: hasPrize ? 0 : 1, // 0が上
+          };
+        }
 
-  list.forEach(v=>{
-    const tr = document.createElement("tr");
-    const thumb = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
-    const link = v.url;
+        // 2) ラウンド進出
+        let baseText = "-";
+        let category = 4;
 
-    const countryHtml = makeFlagsHtml(v.country);
+        if (hasFinal) {
+          baseText = "ファイナリスト";
+          category = 1;
+        } else if (has3) {
+          baseText = "第3ラウンド進出";
+          category = 2;
+        } else if (has2) {
+          baseText = "第2ラウンド進出";
+          category = 3;
+        }
 
-    tr.innerHTML = `
-      <td>${v.pianist}</td>
-      <td>${countryHtml}</td>
-      <td class="num-col">${v.ageYears ?? ""}</td>
-      <td class="num-col">${formatNumber(v.viewCount)}</td>
-      <td class="num-col">${formatNumber(v.likeCount)}</td>
-      <td class="num-col">${formatRatio(v.likeRatio)}</td>
-      <td class="rank-col">${v.finalResult}</td>
-      <td><a href="${link}" target="_blank"><img src="${thumb}" class="thumb-img"></a></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+        const text = hasPrize ? `${baseText}、${prize}` : baseText;
 
-function sortAndRender(key, dir, type){
-  const sorted = [...videos].sort((a,b)=>{
+        return {
+          text,
+          category,
+          rankNum: 999,
+          hasPrizeSort: hasPrize ? 0 : 1,
+        };
+      }
 
-    if (key==="finalSortCategory"){
-      // ①カテゴリ（順位あり→ファイナル→3rd→2nd→1st止まり）
-      if (a.finalSortCategory !== b.finalSortCategory)
-        return (dir==="asc")
-          ? a.finalSortCategory - b.finalSortCategory
-          : b.finalSortCategory - a.finalSortCategory;
+      function calcAge(birthStr) {
+        if (!birthStr) return { age: null, birthForSort: "" };
 
-      // ②（カテゴリ0のみ）順位数
-      if (a.finalSortRankNum !== b.finalSortRankNum)
-        return (dir==="asc")
-          ? a.finalSortRankNum - b.finalSortRankNum
-          : b.finalSortRankNum - a.finalSortRankNum;
+        const b = new Date(birthStr);
+        if (Number.isNaN(b.getTime())) return { age: null, birthForSort: "" };
 
-      // ③同率なら賞ありを上に（0が上）
-      if (a.finalSortHasPrize !== b.finalSortHasPrize)
-        return (dir==="asc")
-          ? a.finalSortHasPrize - b.finalSortHasPrize
-          : b.finalSortHasPrize - a.finalSortHasPrize;
+        const r = new Date(CONTEST_REF_DATE_ISO);
+        let age = r.getFullYear() - b.getFullYear();
+        const md = r.getMonth() - b.getMonth();
 
-      // ④それでも同率なら姓ソートキー
-      return (dir==="asc")
-        ? (a.pianistSortKey||"").localeCompare(b.pianistSortKey||"","ja")
-        : (b.pianistSortKey||"").localeCompare(a.pianistSortKey||"","ja");
-    }
+        if (md < 0 || (md === 0 && r.getDate() < b.getDate())) age--;
 
-    if (key==="age"){
-      const na = (typeof a.ageYears==="number") ? a.ageYears:999;
-      const nb = (typeof b.ageYears==="number") ? b.ageYears:999;
-      if (na!==nb) return (dir==="asc") ? na-nb : nb-na;
+        return { age, birthForSort: birthStr };
+      }
 
-      return (dir==="asc")
-        ? (a.birthDate||"").localeCompare(b.birthDate||"","ja")
-        : (b.birthDate||"").localeCompare(a.birthDate||"","ja");
-    }
+      function renderTable(list) {
+        const tbody = document.getElementById("ranking-body");
+        tbody.innerHTML = "";
 
-    const va = a[key];
-    const vb = b[key];
-    if (type==="number"){
-      const na = Number(va);
-      const nb = Number(vb);
-      const safeA = Number.isFinite(na) ? na : -Infinity;
-      const safeB = Number.isFinite(nb) ? nb : -Infinity;
-      return (dir==="asc") ? safeA-safeB : safeB-safeA;
-    }
-    return (dir==="asc")
-      ? String(va||"").localeCompare(String(vb||""),"ja")
-      : String(vb||"").localeCompare(String(va||""),"ja");
-  });
+        list.forEach((v) => {
+          const tr = document.createElement("tr");
+          const thumb = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
+          const link = v.url;
+          const countryHtml = makeFlagsHtml(v.country);
 
-  renderTable(sorted);
-}
+          tr.innerHTML = `
+            <td>${v.pianist}</td>
+            <td>${countryHtml}</td>
+            <td class="num-col">${v.ageYears ?? ""}</td>
+            <td class="num-col">${formatNumber(v.viewCount)}</td>
+            <td class="num-col">${formatNumber(v.likeCount)}</td>
+            <td class="num-col">${formatRatio(v.likeRatio)}</td>
+            <td class="rank-col">${v.finalResult}</td>
+            <td>
+              <a href="${link}" target="_blank">
+                <img src="${thumb}" class="thumb-img">
+              </a>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
 
-function setupSortIcons(){
-  document.querySelectorAll(".sort-icon").forEach(ic=>{
-    ic.addEventListener("click",()=>{
-      document.querySelectorAll(".sort-icon").forEach(i=>i.classList.remove("active"));
-      ic.classList.add("active");
-      sortAndRender(ic.dataset.key, ic.dataset.dir, ic.dataset.type);
-    });
-  });
-}
+      function sortAndRender(key, dir, type) {
+        const sorted = [...videos].sort((a, b) => {
+          if (key === "finalSortCategory") {
+            // ①カテゴリ（順位あり→ファイナル→3rd→2nd→1st止まり）
+            if (a.finalSortCategory !== b.finalSortCategory) {
+              return dir === "asc"
+                ? a.finalSortCategory - b.finalSortCategory
+                : b.finalSortCategory - a.finalSortCategory;
+            }
 
-function formatTargetDateJp(iso){
-  try{
-    const d = new Date(iso);
-    const wd = "月火水木金土日"[d.getDay()===0?6:d.getDay()-1];
-    return `${d.getFullYear()}年${String(d.getMonth()+1).padStart(2,"0")}月${String(d.getDate()).padStart(2,"0")}日(${wd})`;
-  }catch(e){ return iso; }
-}
+            // ②（カテゴリ0のみ）順位数
+            if (a.finalSortRankNum !== b.finalSortRankNum) {
+              return dir === "asc"
+                ? a.finalSortRankNum - b.finalSortRankNum
+                : b.finalSortRankNum - a.finalSortRankNum;
+            }
 
-async function loadAndBuild(){
-  const [roundRes, compRes] = await Promise.all([
-    fetch("all_rounds_view_count.json",{cache:"no-store"}),
-    fetch("competitors.json",{cache:"no-store"})
-  ]);
+            // ③同率なら賞ありを上に（0が上）
+            if (a.finalSortHasPrize !== b.finalSortHasPrize) {
+              return dir === "asc"
+                ? a.finalSortHasPrize - b.finalSortHasPrize
+                : b.finalSortHasPrize - a.finalSortHasPrize;
+            }
 
-  const rd = await roundRes.json();
-  const comps = await compRes.json();
+            // ④それでも同率なら姓ソートキー
+            return dir === "asc"
+              ? (a.pianistSortKey || "").localeCompare(
+                  b.pianistSortKey || "",
+                  "ja"
+                )
+              : (b.pianistSortKey || "").localeCompare(
+                  a.pianistSortKey || "",
+                  "ja"
+                );
+          }
 
-  const videosMap = rd.videos || {};
-  let unmatched = 0;
+          if (key === "age") {
+            const na = typeof a.ageYears === "number" ? a.ageYears : 999;
+            const nb = typeof b.ageYears === "number" ? b.ageYears : 999;
 
-  videos = comps.filter(c=>c[ROUND_KEY]).map(c=>{
-    const vid = c[ROUND_KEY];
-    const st = videosMap[vid];
-    if (!st) unmatched++;
+            if (na !== nb) return dir === "asc" ? na - nb : nb - na;
 
-    const fr = determineFinalResult(c);
-    const age = calcAge(c["生年月日"]||"");
+            return dir === "asc"
+              ? (a.birthDate || "").localeCompare(b.birthDate || "", "ja")
+              : (b.birthDate || "").localeCompare(a.birthDate || "", "ja");
+          }
 
-    const viewCount = st ? st.viewCount : 0;
-    const likeCount = st ? st.likeCount : 0;
-    const likeRatio = (viewCount > 0) ? (likeCount / viewCount) : null;
+          const va = a[key];
+          const vb = b[key];
 
-    return {
-      videoId: vid,
-      url: `https://www.youtube.com/watch?v=${vid}`,
-      pianist: c["名前"]||"",
-      pianistSortKey: makePianistSortKey(c["名前"]||""),
-      country: c["国"]||"",
-      finalResult: fr.text,
-      finalSortCategory: fr.category,
-      finalSortRankNum: fr.rankNum,
-      finalSortHasPrize: fr.hasPrizeSort,
-      viewCount,
-      likeCount,
-      likeRatio,
-      birthDate: age.birthForSort,
-      ageYears: age.age
-    };
-  });
+          if (type === "number") {
+            const na = Number(va);
+            const nb = Number(vb);
+            const safeA = Number.isFinite(na) ? na : -Infinity;
+            const safeB = Number.isFinite(nb) ? nb : -Infinity;
 
-  document.getElementById("summary-line").textContent =
-    `集計日: ${formatTargetDateJp(rd.date||"")} ／ 対象動画数: ${videos.length} 本 ／ 年齢は2025年10月1日時点`;
+            return dir === "asc" ? safeA - safeB : safeB - safeA;
+          }
 
-  if (unmatched>0){
-    document.getElementById("unmatched-line").textContent =
-      `※ ${unmatched} 本は再生数データが見つかりません（0 として表示）。`;
-  }
+          return dir === "asc"
+            ? String(va || "").localeCompare(String(vb || ""), "ja")
+            : String(vb || "").localeCompare(String(va || ""), "ja");
+        });
 
-  setupSortIcons();
-  const def = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
-  if (def) def.classList.add("active");
+        renderTable(sorted);
+      }
 
-  sortAndRender("viewCount","desc","number");
-}
+      function setupSortIcons() {
+        document.querySelectorAll(".sort-icon").forEach((ic) => {
+          ic.addEventListener("click", () => {
+            document
+              .querySelectorAll(".sort-icon")
+              .forEach((i) => i.classList.remove("active"));
 
-document.addEventListener("DOMContentLoaded",()=>{
-  loadAndBuild().catch(e=>{
-    document.getElementById("summary-line").textContent="読み込みエラー";
-    console.error(e);
-  });
-});
+            ic.classList.add("active");
+            sortAndRender(ic.dataset.key, ic.dataset.dir, ic.dataset.type);
+          });
+        });
+      }
 
+      function formatTargetDateJp(iso) {
+        try {
+          const d = new Date(iso);
+          const wd = "月火水木金土日"[d.getDay() === 0 ? 6 : d.getDay() - 1];
+          return `${d.getFullYear()}年${String(d.getMonth() + 1).padStart(
+            2,
+            "0"
+          )}月${String(d.getDate()).padStart(2, "0")}日(${wd})`;
+        } catch (e) {
+          return iso;
+        }
+      }
+
+      async function loadAndBuild() {
+        const [roundRes, compRes] = await Promise.all([
+          fetch("all_rounds_view_count.json", { cache: "no-store" }),
+          fetch("competitors.json", { cache: "no-store" }),
+        ]);
+
+        const rd = await roundRes.json();
+        const comps = await compRes.json();
+
+        const videosMap = rd.videos || {};
+        let unmatched = 0;
+
+        videos = comps
+          .filter((c) => c[ROUND_KEY])
+          .map((c) => {
+            const vid = c[ROUND_KEY];
+            const st = videosMap[vid];
+
+            if (!st) unmatched++;
+
+            const fr = determineFinalResult(c);
+            const age = calcAge(c["生年月日"] || "");
+
+            const viewCount = st ? st.viewCount : 0;
+            const likeCount = st ? st.likeCount : 0;
+            const likeRatio = viewCount > 0 ? likeCount / viewCount : null;
+
+            return {
+              videoId: vid,
+              url: `https://www.youtube.com/watch?v=${vid}`,
+              pianist: c["名前"] || "",
+              pianistSortKey: makePianistSortKey(c["名前"] || ""),
+              country: c["国"] || "",
+              finalResult: fr.text,
+              finalSortCategory: fr.category,
+              finalSortRankNum: fr.rankNum,
+              finalSortHasPrize: fr.hasPrizeSort,
+              viewCount,
+              likeCount,
+              likeRatio,
+              birthDate: age.birthForSort,
+              ageYears: age.age,
+            };
+          });
+
+        document.getElementById(
+          "summary-line"
+        ).textContent = `集計日: ${formatTargetDateJp(
+          rd.date || ""
+        )} ／ 対象動画数: ${videos.length} 本 ／ 年齢は2025年10月1日時点`;
+
+        if (unmatched > 0) {
+          document.getElementById(
+            "unmatched-line"
+          ).textContent = `※ ${unmatched} 本は再生数データが見つかりません（0 として表示）。`;
+        }
+
+        setupSortIcons();
+
+        const def = document.querySelector(
+          '.sort-icon[data-key="viewCount"][data-dir="desc"]'
+        );
+        if (def) def.classList.add("active");
+
+        sortAndRender("viewCount", "desc", "number");
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadAndBuild().catch((e) => {
+          document.getElementById("summary-line").textContent = "読み込みエラー";
+          console.error(e);
+        });
+      });
     </script>
   </body>
 </html>
