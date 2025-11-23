@@ -1,179 +1,591 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="UTF-8">
-    <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025第2次予選集計</title>
-    <meta name="description" content="ショパン国際ピアノコンクール2025第2次予選のYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#157878">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css?v=76ba7eec5aa7918590041e6c94a14363f6b580e6">
+    <meta charset="UTF-8" />
+    <title>ショパコン勝手にYouTube聴衆賞(非公式) | 2025第2ラウンド集計</title>
+    <meta
+      name="description"
+      content="ショパン国際ピアノコンクール2025第2ラウンドのYouTube再生回数を個人的にまとめた非公式メモです。順位と関係なく伸びているコンテスタントの存在を可視化するためのページです。"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap"
+      as="style"
+      type="text/css"
+      crossorigin
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#157878" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="/chopin-competition/assets/css/style.css" />
+
     <style>
-      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
-      th, td { border: 1px solid #ddd; padding: 0.4rem 0.5rem; }
-      th { background: #f0f0f0; }
-      tbody tr:nth-child(even) { background: #fafafa; }
-      .num-col { text-align: right; white-space: nowrap; }
-      .rank-col { text-align: right; white-space: nowrap; }
-      .sort-icons { margin-left: 0.25rem; font-size: 0.75rem; white-space: nowrap; }
-      .sort-icon { cursor: pointer; margin-left: 0.1rem; color: #888; }
-      .sort-icon.active { color: #000; font-weight: bold; }
-      .flag-icon { width: 20px; height: 14px; object-fit: cover; vertical-align: middle; }
-      .thumb-img { width: 120px; aspect-ratio: 16/9; object-fit: cover; display: block; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 0.4rem 0.5rem;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      tbody tr:nth-child(even) {
+        background: #fafafa;
+      }
+      .num-col {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .rank-col {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .sort-icons {
+        margin-left: 0.25rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+      .sort-icon {
+        cursor: pointer;
+        margin-left: 0.1rem;
+        color: #888;
+      }
+      .sort-icon.active {
+        color: #000;
+        font-weight: bold;
+      }
+      .flag-icon {
+        width: 20px;
+        height: 14px;
+        object-fit: cover;
+        vertical-align: middle;
+      }
+      .flags-wrap {
+        display: inline-flex;
+        gap: 2px;
+        align-items: center;
+      }
+      .thumb-img {
+        width: 120px;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        display: block;
+      }
+      .muted {
+        color: #777;
+        font-size: 0.85rem;
+      }
+      .table-wrap {
+        width: 100%;
+        height: 80vh;
+        overflow: auto;
+        border: 1px solid #ddd;
+        position: relative;
+      }
     </style>
   </head>
+
   <body>
     <a id="skip-to-content" href="#content">Skip to the content.</a>
+
     <header class="page-header" role="banner">
-      <h1 class="project-name"><a href="/chopin-competition/" style="color:#fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a></h1>
-      <h2 class="project-tagline">ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。順位と関係なく再生回数が伸びているコンテスタントの存在が気になってしまったのでまとめました🥰</h2>
+      <h1 class="project-name">
+        <a href="/chopin-competition/" style="color: #fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a>
+      </h1>
+      <h2 class="project-tagline">
+        ショパン国際ピアノコンクールのYouTube再生数を個人的にまとめた非公式メモです。
+      </h2>
     </header>
+
     <main id="content" class="main-content" role="main">
-      <h1>第19回(2025)ショパン国際ピアノコンクール 第2次予選再生数ランキング</h1>
-      <p>集計日: 2025年11月17日(月) ／ 対象動画数: 40 本 ／ 年齢は2025年10月1日時点</p>
-      <table>
-        <thead>
-          <tr>
-            <th>名前              <span class='sort-icons'>                <span class='sort-icon' data-key='pianistSortKey' data-dir='asc' data-type='string'>▲</span>                <span class='sort-icon' data-key='pianistSortKey' data-dir='desc' data-type='string'>▼</span>              </span>            </th>
-            <th style='width:6em;'>国              <span class='sort-icons'>                <span class='sort-icon' data-key='country' data-dir='asc' data-type='string'>▲</span>                <span class='sort-icon' data-key='country' data-dir='desc' data-type='string'>▼</span>              </span>            </th>
-            <th style='width:5em;'>年齢              <span class='sort-icons'>                <span class='sort-icon' data-key='age' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='age' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:8em;'>再生回数              <span class='sort-icons'>                <span class='sort-icon' data-key='viewCount' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='viewCount' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:8em;'>高評価数              <span class='sort-icons'>                <span class='sort-icon' data-key='likeCount' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='likeCount' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:8em;'>最終結果              <span class='sort-icons'>                <span class='sort-icon' data-key='finalSortCategory' data-dir='asc' data-type='number'>▲</span>                <span class='sort-icon' data-key='finalSortCategory' data-dir='desc' data-type='number'>▼</span>              </span>            </th>
-            <th style='width:11em;'>動画</th>
-          </tr>
-        </thead>
-        <tbody id='ranking-body'></tbody>
-      </table>
+      <h1>第19回(2025)ショパン国際ピアノコンクール 第2ラウンド再生数ランキング</h1>
+      <p id="summary-line" class="muted">読み込み中…</p>
+      <p id="unmatched-line" class="muted"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                名前
+                <span class="sort-icons">
+                  <span
+                    class="sort-icon"
+                    data-key="pianistSortKey"
+                    data-dir="asc"
+                    data-type="string"
+                    >▲</span
+                  >
+                  <span
+                    class="sort-icon"
+                    data-key="pianistSortKey"
+                    data-dir="desc"
+                    data-type="string"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 6em;">
+                国
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="country" data-dir="asc" data-type="string"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="country" data-dir="desc" data-type="string"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 5em;">
+                年齢
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="age" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="age" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 8em;">
+                再生回数
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="viewCount" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="viewCount" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 8em;">
+                高評価数
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="likeCount" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="likeCount" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 8em;">
+                高評価率
+                <span class="sort-icons">
+                  <span class="sort-icon" data-key="likeRatio" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="likeRatio" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 8em;">
+                最終結果
+                <span class="sort-icons">
+                  <span
+                    class="sort-icon"
+                    data-key="finalSortCategory"
+                    data-dir="asc"
+                    data-type="number"
+                    >▲</span
+                  >
+                  <span
+                    class="sort-icon"
+                    data-key="finalSortCategory"
+                    data-dir="desc"
+                    data-type="number"
+                    >▼</span
+                  >
+                </span>
+              </th>
+              <th style="width: 11em;">動画</th>
+            </tr>
+          </thead>
+
+          <tbody id="ranking-body"></tbody>
+        </table>
+      </div>
+
       <footer class="site-footer">
-          <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>
+        <span class="site-footer-owner">©ショパコン勝手にYouTube聴衆賞(非公式)</span>
       </footer>
     </main>
+
     <script>
-const videos = [{"videoId": "HxNhoMMXw58", "url": "https://www.youtube.com/watch?v=HxNhoMMXw58", "publishedAt": "2025-10-10T22:03:17Z", "viewCount": 33044, "likeCount": 652, "pianist": "Tianyou Li", "pianistSortKey": "li, tianyou", "country": "China", "finalResult": "ファイナリスト", "finalSortCategory": 1, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "2004-04-05", "ageYears": 21}, {"videoId": "Uy6JUrWbHls", "url": "https://www.youtube.com/watch?v=Uy6JUrWbHls", "publishedAt": "2025-10-11T17:15:16Z", "viewCount": 364019, "likeCount": 7295, "pianist": "Tianyao Lyu", "pianistSortKey": "lyu, tianyao", "country": "China", "finalResult": "4位、最優秀コンチェルト賞", "finalSortCategory": 0, "finalSortRankNum": 4, "finalSortPrize": 0, "flagPath": "img/flag/china.png", "birthDate": "2008-10-21", "ageYears": 16}, {"videoId": "2VLR4yAY0Aw", "url": "https://www.youtube.com/watch?v=2VLR4yAY0Aw", "publishedAt": "2025-10-10T13:49:19Z", "viewCount": 23674, "likeCount": 400, "pianist": "Eric Guo", "pianistSortKey": "guo, eric", "country": "Canada", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/canada.png", "birthDate": "2002-07-31T15:00:00.000Z", "ageYears": 23}, {"videoId": "p1MQmMFUozw", "url": "https://www.youtube.com/watch?v=p1MQmMFUozw", "publishedAt": "2025-10-11T12:16:27Z", "viewCount": 16741, "likeCount": 298, "pianist": "Xiaoxuan Li", "pianistSortKey": "li, xiaoxuan", "country": "China", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "2001-12-20T15:00:00.000Z", "ageYears": 23}, {"videoId": "44z1KHaLW0A", "url": "https://www.youtube.com/watch?v=44z1KHaLW0A", "publishedAt": "2025-10-09T13:42:39Z", "viewCount": 77133, "likeCount": 1442, "pianist": "Piotr Alexewicz", "pianistSortKey": "alexewicz, piotr", "country": "Poland", "finalResult": "5位", "finalSortCategory": 0, "finalSortRankNum": 5, "finalSortPrize": 1, "flagPath": "img/flag/poland.png", "birthDate": "2000-04-09", "ageYears": 25}, {"videoId": "uNU3Hk37T04", "url": "https://www.youtube.com/watch?v=uNU3Hk37T04", "publishedAt": "2025-10-11T12:08:48Z", "viewCount": 165591, "likeCount": 4567, "pianist": "Hyuk Lee", "pianistSortKey": "lee, hyuk", "country": "Republic of Korea", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "2000-01-03T15:00:00.000Z", "ageYears": 25}, {"videoId": "d7Oi0G_UpTY", "url": "https://www.youtube.com/watch?v=d7Oi0G_UpTY", "publishedAt": "2025-10-12T07:09:03Z", "viewCount": 138592, "likeCount": 3374, "pianist": "Vincent Ong", "pianistSortKey": "ong, vincent", "country": "Malaysia", "finalResult": "5位", "finalSortCategory": 0, "finalSortRankNum": 5, "finalSortPrize": 1, "flagPath": "img/flag/malaysia.png", "birthDate": "2001-04-12", "ageYears": 24}, {"videoId": "GYrkIocrmXc", "url": "https://www.youtube.com/watch?v=GYrkIocrmXc", "publishedAt": "2025-10-11T15:24:58Z", "viewCount": 245561, "likeCount": 4220, "pianist": "Eric Lu", "pianistSortKey": "lu, eric", "country": "United States of America", "finalResult": "1位", "finalSortCategory": 0, "finalSortRankNum": 1, "finalSortPrize": 1, "flagPath": "img/flag/usa.png", "birthDate": "1997-12-15", "ageYears": 27}, {"videoId": "kpwWkURj6eA", "url": "https://www.youtube.com/watch?v=kpwWkURj6eA", "publishedAt": "2025-10-12T08:11:07Z", "viewCount": 193111, "likeCount": 5979, "pianist": "Piotr Pawlak", "pianistSortKey": "pawlak, piotr", "country": "Poland", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/poland.png", "birthDate": "1998-02-19T15:00:00.000Z", "ageYears": 27}, {"videoId": "uX0ruB31hyg", "url": "https://www.youtube.com/watch?v=uX0ruB31hyg", "publishedAt": "2025-10-12T20:05:30Z", "viewCount": 80509, "likeCount": 1758, "pianist": "Zitong Wang", "pianistSortKey": "wang, zitong", "country": "China", "finalResult": "3位、最優秀ソナタ賞", "finalSortCategory": 0, "finalSortRankNum": 3, "finalSortPrize": 0, "flagPath": "img/flag/china.png", "birthDate": "1999-02-03", "ageYears": 26}, {"videoId": "uD1OQNhCj3Y", "url": "https://www.youtube.com/watch?v=uD1OQNhCj3Y", "publishedAt": "2025-10-10T21:23:14Z", "viewCount": 109674, "likeCount": 2728, "pianist": "Hyo Lee", "pianistSortKey": "lee, hyo", "country": "Republic of Korea", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "2007-01-04T15:00:00.000Z", "ageYears": 18}, {"videoId": "Tq02Z3Pvz_g", "url": "https://www.youtube.com/watch?v=Tq02Z3Pvz_g", "publishedAt": "2025-10-10T19:02:10Z", "viewCount": 444426, "likeCount": 10885, "pianist": "Shiori Kuwahara", "pianistSortKey": "kuwahara, shiori", "country": "Japan", "finalResult": "4位", "finalSortCategory": 0, "finalSortRankNum": 4, "finalSortPrize": 1, "flagPath": "img/flag/japan.png", "birthDate": "1995-10-11", "ageYears": 29}, {"videoId": "KnptD5WIvlc", "url": "https://www.youtube.com/watch?v=KnptD5WIvlc", "publishedAt": "2025-10-12T12:34:17Z", "viewCount": 71935, "likeCount": 1731, "pianist": "Yehuda Prokopowicz", "pianistSortKey": "prokopowicz, yehuda", "country": "Poland", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/poland.png", "birthDate": "2005-11-15T15:00:00.000Z", "ageYears": 19}, {"videoId": "e22IcvM9yx8", "url": "https://www.youtube.com/watch?v=e22IcvM9yx8", "publishedAt": "2025-10-12T15:42:29Z", "viewCount": 178771, "likeCount": 3661, "pianist": "Miyu Shindo", "pianistSortKey": "shindo, miyu", "country": "Japan", "finalResult": "ファイナリスト", "finalSortCategory": 1, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/japan.png", "birthDate": "2002-04-26", "ageYears": 23}, {"videoId": "MsaCHVBpGvI", "url": "https://www.youtube.com/watch?v=MsaCHVBpGvI", "publishedAt": "2025-10-09T17:37:09Z", "viewCount": 407692, "likeCount": 7824, "pianist": "Kevin Chen", "pianistSortKey": "chen, kevin", "country": "Canada", "finalResult": "2位", "finalSortCategory": 0, "finalSortRankNum": 2, "finalSortPrize": 1, "flagPath": "img/flag/canada.png", "birthDate": "2005-03-07", "ageYears": 20}, {"videoId": "Qc4W05xeXWQ", "url": "https://www.youtube.com/watch?v=Qc4W05xeXWQ", "publishedAt": "2025-10-12T19:59:00Z", "viewCount": 429751, "likeCount": 10029, "pianist": "Tomoharu Ushida", "pianistSortKey": "ushida, tomoharu", "country": "Japan", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/japan.png", "birthDate": "1999-10-15T15:00:00.000Z", "ageYears": 25}, {"videoId": "X7mObhzQnvk", "url": "https://www.youtube.com/watch?v=X7mObhzQnvk", "publishedAt": "2025-10-12T21:02:33Z", "viewCount": 22317, "likeCount": 430, "pianist": "Yifan Wu", "pianistSortKey": "wu, yifan", "country": "China", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "2008-11-10T15:00:00.000Z", "ageYears": 16}, {"videoId": "Kcv0suUQNYQ", "url": "https://www.youtube.com/watch?v=Kcv0suUQNYQ", "publishedAt": "2025-10-12T23:19:44Z", "viewCount": 60514, "likeCount": 1168, "pianist": "William Yang", "pianistSortKey": "yang, william", "country": "United States of America", "finalResult": "6位", "finalSortCategory": 0, "finalSortRankNum": 6, "finalSortPrize": 1, "flagPath": "img/flag/usa.png", "birthDate": "2001-05-13", "ageYears": 24}, {"videoId": "uW4HzjKN2QI", "url": "https://www.youtube.com/watch?v=uW4HzjKN2QI", "publishedAt": "2025-10-09T21:13:44Z", "viewCount": 45904, "likeCount": 960, "pianist": "Yang (Jack) Gao", "pianistSortKey": "gao, yang (jack)", "country": "China", "finalResult": "第3ラウンド進出", "finalSortCategory": 2, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "2003-12-17T15:00:00.000Z", "ageYears": 21}, {"videoId": "02ztjElgjXw", "url": "https://www.youtube.com/watch?v=02ztjElgjXw", "publishedAt": "2025-10-10T20:06:31Z", "viewCount": 108782, "likeCount": 3276, "pianist": "David Khrikuli", "pianistSortKey": "khrikuli, david", "country": "Georgia", "finalResult": "ファイナリスト", "finalSortCategory": 1, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/georgia.png", "birthDate": "2001-04-26", "ageYears": 24}, {"videoId": "0ebsV-X_uNk", "url": "https://www.youtube.com/watch?v=0ebsV-X_uNk", "publishedAt": "2025-10-10T14:59:05Z", "viewCount": 31291, "likeCount": 523, "pianist": "Zihan Jin", "pianistSortKey": "jin, zihan", "country": "China", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "", "ageYears": null}, {"videoId": "7Q82yjGfl6s", "url": "https://www.youtube.com/watch?v=7Q82yjGfl6s", "publishedAt": "2025-10-12T14:32:15Z", "viewCount": 35832, "likeCount": 1175, "pianist": "Gabriele Strata", "pianistSortKey": "strata, gabriele", "country": "Italy", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "", "ageYears": null}, {"videoId": "7sbdNNkZkEY", "url": "https://www.youtube.com/watch?v=7sbdNNkZkEY", "publishedAt": "2025-10-09T14:28:20Z", "viewCount": 33814, "likeCount": 666, "pianist": "Jonas Aumiller", "pianistSortKey": "aumiller, jonas", "country": "Germany", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "", "ageYears": null}, {"videoId": "bS1Djz_RsM8", "url": "https://www.youtube.com/watch?v=bS1Djz_RsM8", "publishedAt": "2025-10-12T13:16:59Z", "viewCount": 29813, "likeCount": 560, "pianist": "Hao Rao", "pianistSortKey": "rao, hao", "country": "China", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "", "ageYears": null}, {"videoId": "hErQuNUHsMc", "url": "https://www.youtube.com/watch?v=hErQuNUHsMc", "publishedAt": "2025-10-10T15:42:47Z", "viewCount": 8945, "likeCount": 159, "pianist": "Xiaoyu Hu", "pianistSortKey": "hu, xiaoyu", "country": "China", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "", "ageYears": null}, {"videoId": "Jw1jJqwz13Q", "url": "https://www.youtube.com/watch?v=Jw1jJqwz13Q", "publishedAt": "2025-10-11T22:52:24Z", "viewCount": 32703, "likeCount": 1041, "pianist": "Ruben Micieli", "pianistSortKey": "micieli, ruben", "country": "Italy", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "", "ageYears": null}, {"videoId": "kJ9_eHujiGk", "url": "https://www.youtube.com/watch?v=kJ9_eHujiGk", "publishedAt": "2025-10-09T20:59:56Z", "viewCount": 13975, "likeCount": 233, "pianist": "Zixi Chen", "pianistSortKey": "chen, zixi", "country": "China", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "", "ageYears": null}, {"videoId": "KzuyiKqRHwE", "url": "https://www.youtube.com/watch?v=KzuyiKqRHwE", "publishedAt": "2025-10-09T22:25:17Z", "viewCount": 19634, "likeCount": 378, "pianist": "Yubo Deng", "pianistSortKey": "deng, yubo", "country": "China", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "", "ageYears": null}, {"videoId": "L-Dj2mq_JEI", "url": "https://www.youtube.com/watch?v=L-Dj2mq_JEI", "publishedAt": "2025-10-11T15:00:35Z", "viewCount": 17823, "likeCount": 486, "pianist": "Philipp Lynov", "pianistSortKey": "lynov, philipp", "country": "Individual neutral pianist", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "", "ageYears": null}, {"videoId": "MJhqz74E-38", "url": "https://www.youtube.com/watch?v=MJhqz74E-38", "publishedAt": "2025-10-11T14:29:16Z", "viewCount": 17241, "likeCount": 437, "pianist": "Zhexiang Li", "pianistSortKey": "li, zhexiang", "country": "China", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "", "ageYears": null}, {"videoId": "PjQQa0YtGq0", "url": "https://www.youtube.com/watch?v=PjQQa0YtGq0", "publishedAt": "2025-10-09T14:12:53Z", "viewCount": 37047, "likeCount": 863, "pianist": "Yanyan Bao", "pianistSortKey": "bao, yanyan", "country": "China", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "", "ageYears": null}, {"videoId": "pKrZFdwMKB8", "url": "https://www.youtube.com/watch?v=pKrZFdwMKB8", "publishedAt": "2025-10-09T13:37:38Z", "viewCount": 35588, "likeCount": 696, "pianist": "Jacky Zhang", "pianistSortKey": "zhang, jacky", "country": "United Kingdom of Great Britain and Northern Ireland", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "", "ageYears": null}, {"videoId": "tGGTT81H80U", "url": "https://www.youtube.com/watch?v=tGGTT81H80U", "publishedAt": "2025-10-09T16:34:57Z", "viewCount": 239155, "likeCount": 6668, "pianist": "Kai-Min Chang", "pianistSortKey": "chang, kai-min", "country": "Chinese Taipei", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "", "ageYears": null}, {"videoId": "TvhdafN3H4s", "url": "https://www.youtube.com/watch?v=TvhdafN3H4s", "publishedAt": "2025-10-12T13:40:26Z", "viewCount": 10066, "likeCount": 265, "pianist": "Anthony Ratinov", "pianistSortKey": "ratinov, anthony", "country": "United States of America", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/usa.png", "birthDate": "", "ageYears": null}, {"videoId": "v0qXEIV_hJg", "url": "https://www.youtube.com/watch?v=v0qXEIV_hJg", "publishedAt": "2025-10-09T22:08:49Z", "viewCount": 17235, "likeCount": 414, "pianist": "Xuehong Chen", "pianistSortKey": "chen, xuehong", "country": "China", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/china.png", "birthDate": "", "ageYears": null}, {"videoId": "wLJ9bpE0WMA", "url": "https://www.youtube.com/watch?v=wLJ9bpE0WMA", "publishedAt": "2025-10-10T18:51:52Z", "viewCount": 84626, "likeCount": 2451, "pianist": "Adam Kałduński", "pianistSortKey": "kałduński, adam", "country": "Poland", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/poland.png", "birthDate": "", "ageYears": null}, {"videoId": "WwS5RfoFM-M", "url": "https://www.youtube.com/watch?v=WwS5RfoFM-M", "publishedAt": "2025-10-12T22:28:49Z", "viewCount": 70684, "likeCount": 1305, "pianist": "Miki Yamagata", "pianistSortKey": "yamagata, miki", "country": "Japan", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/japan.png", "birthDate": "", "ageYears": null}, {"videoId": "YXTaHbdfQqU", "url": "https://www.youtube.com/watch?v=YXTaHbdfQqU", "publishedAt": "2025-10-10T21:38:47Z", "viewCount": 82580, "likeCount": 2281, "pianist": "Kwanwook Lee", "pianistSortKey": "lee, kwanwook", "country": "Republic of Korea", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "", "ageYears": null}, {"videoId": "z1UHqZ92GyQ", "url": "https://www.youtube.com/watch?v=z1UHqZ92GyQ", "publishedAt": "2025-10-12T02:22:36Z", "viewCount": 16283, "likeCount": 350, "pianist": "Nathalia Milstein", "pianistSortKey": "milstein, nathalia", "country": "France", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "", "birthDate": "", "ageYears": null}, {"videoId": "zXi1PZuy4JA", "url": "https://www.youtube.com/watch?v=zXi1PZuy4JA", "publishedAt": "2025-10-12T04:55:30Z", "viewCount": 258634, "likeCount": 8376, "pianist": "Yumeka Nakagawa", "pianistSortKey": "nakagawa, yumeka", "country": "Japan", "finalResult": "第2ラウンド進出", "finalSortCategory": 3, "finalSortRankNum": 999, "finalSortPrize": 1, "flagPath": "img/flag/japan.png", "birthDate": "", "ageYears": null}];
+      const ROUND_KEY = "第2";
+      const ROUND_LABEL = "第2ラウンド";
+      const CONTEST_REF_DATE_ISO = "2025-10-01";
 
-function formatNumber(n){
-  if (n === null || n === undefined) return '';
-  return n.toLocaleString('ja-JP');
-}
+      // ★ GitHub Pages の公開ルート（必要ならここだけ変える）
+      const BASE = "/chopin-competition/";
 
-function renderTable(list){
-  const tbody = document.getElementById('ranking-body');
-  tbody.innerHTML = '';
+      let videos = [];
 
-  list.forEach(v=>{
-    const finalText = v.finalResult || '—';
+      // flag-icons CDN（4x3 SVG）
+      const FLAG_CDN_BASE =
+        "https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.5.0/flags/4x3";
 
-    let countryCellHtml = '';
-    if (v.flagPath){
-      countryCellHtml = `<img src="${v.flagPath}" alt="${v.country}" title="${v.country}" class="flag-icon">`;
-    } else {
-      countryCellHtml = v.country || '';
-    }
+      // 国名→ISO alpha-2 の最低限マップ
+      const COUNTRY_CODE_OVERRIDE = {
+        "Bulgaria": "bg",
+        "Canada": "ca",
+        "China": "cn",
+        "Czechia": "cz",
+        "France": "fr",
+        "Georgia": "ge",
+        "Germany": "de",
+        "Hong Kong": "hk",
+        "Italy": "it",
+        "Japan": "jp",
+        "Malaysia": "my",
+        "Poland": "pl",
+        "Republic of Korea": "kr",
+        "Spain": "es",
+        "United Kingdom of Great Britain and Northern Ireland": "gb",
+        "United States of America": "us",
+        "Portugal": "pt",
+        "Vietnam": "vn",
+      };
 
-    const thumbUrl = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
-    const videoUrl  = v.url || `https://www.youtube.com/watch?v=${v.videoId}`;
-
-    const ageText = (v.ageYears !== null && v.ageYears !== undefined) ? v.ageYears : '';
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${v.pianist || ''}</td>
-      <td>${countryCellHtml}</td>
-      <td class="num-col">${ageText}</td>
-      <td class="num-col">${formatNumber(v.viewCount)}</td>
-      <td class="num-col">${formatNumber(v.likeCount)}</td>
-      <td class="rank-col">${finalText}</td>
-      <td>
-        <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">
-          <img src="${thumbUrl}" alt="YouTube thumbnail" class="thumb-img">
-        </a>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-function sortAndRender(key, dir, type){
-  const sorted = [...videos].sort((a,b)=>{
-    if (key === 'finalSortCategory'){
-      if (a.finalSortCategory !== b.finalSortCategory){
-        return dir === 'asc'
-          ? a.finalSortCategory - b.finalSortCategory
-          : b.finalSortCategory - a.finalSortCategory;
+      function toIntSafe(v, def = 0) {
+        const n = parseInt(v, 10);
+        return Number.isFinite(n) ? n : def;
       }
-      if (a.finalSortRankNum !== b.finalSortRankNum){
-        return dir === 'asc'
-          ? a.finalSortRankNum - b.finalSortRankNum
-          : b.finalSortRankNum - a.finalSortRankNum;
+
+      function formatNumber(n) {
+        return n === null || n === undefined
+          ? ""
+          : Number(n).toLocaleString("ja-JP");
       }
-      if (a.finalSortPrize !== b.finalSortPrize){
-        return dir === 'asc'
-          ? a.finalSortPrize - b.finalSortPrize
-          : b.finalSortPrize - a.finalSortPrize;
+
+      function formatRatio(x) {
+        if (x === null || x === undefined || !Number.isFinite(x)) return "";
+        return (
+          (x * 100).toLocaleString("ja-JP", { maximumFractionDigits: 2 }) + "%"
+        );
       }
-      return dir === 'asc'
-        ? (a.pianistSortKey || '').localeCompare(b.pianistSortKey || '', 'ja')
-        : (b.pianistSortKey || '').localeCompare(a.pianistSortKey || '', 'ja');
-    }
 
-    if (key === 'age'){
-      const na = (typeof a.ageYears === 'number') ? a.ageYears : 999;
-      const nb = (typeof b.ageYears === 'number') ? b.ageYears : 999;
-      if (na !== nb){
-        return dir === 'asc' ? na - nb : nb - na;
+      function splitCountries(countryStr) {
+        if (!countryStr) return [];
+        return countryStr
+          .split("/")
+          .map((s) => s.trim())
+          .filter(Boolean);
       }
-      const da = a.birthDate || '';
-      const db = b.birthDate || '';
-      return dir === 'asc'
-        ? da.localeCompare(db, 'ja')
-        : db.localeCompare(da, 'ja');
-    }
 
-    const va = a[key];
-    const vb = b[key];
+      function getCountryCode(countryName) {
+        if (!countryName) return "";
+        if (COUNTRY_CODE_OVERRIDE[countryName])
+          return COUNTRY_CODE_OVERRIDE[countryName];
 
-    if(type === 'number'){
-      const na = (typeof va === 'number') ? va : (parseFloat(va) || 0);
-      const nb = (typeof vb === 'number') ? vb : (parseFloat(vb) || 0);
-      return dir === 'asc' ? na - nb : nb - na;
-    } else {
-      const sa = (va ?? '').toString();
-      const sb = (vb ?? '').toString();
-      return dir === 'asc'
-        ? sa.localeCompare(sb, 'ja')
-        : sb.localeCompare(sa, 'ja');
-    }
-  });
+        const maybe = countryName.trim().toLowerCase();
+        if (/^[a-z]{2}$/.test(maybe)) return maybe;
 
-  renderTable(sorted);
-}
+        return "";
+      }
 
-function setupSortIcons(){
-  const icons = document.querySelectorAll('.sort-icon');
-  icons.forEach(icon=>{
-    icon.addEventListener('click',()=>{
-      icons.forEach(i=>i.classList.remove('active'));
-      icon.classList.add('active');
-      const key = icon.getAttribute('data-key');
-      const dir = icon.getAttribute('data-dir');
-      const type = icon.getAttribute('data-type') || 'number';
-      sortAndRender(key, dir, type);
-    });
-  });
-}
+      function makeFlagsHtml(countryStr) {
+        const parts = splitCountries(countryStr);
+        if (parts.length === 0) return "";
 
-document.addEventListener('DOMContentLoaded', ()=>{
-  setupSortIcons();
-  const defaultIcon = document.querySelector('.sort-icon[data-key="viewCount"][data-dir="desc"]');
-  if(defaultIcon){
-    defaultIcon.classList.add('active');
-  }
-  sortAndRender('viewCount','desc','number');
-});
+        const imgs = parts
+          .map((name) => {
+            const code = getCountryCode(name);
+            if (!code) return null;
 
+            const src = `${FLAG_CDN_BASE}/${code}.svg`;
+            return `<img src="${src}" class="flag-icon" alt="${name}" title="${name}">`;
+          })
+          .filter(Boolean);
+
+        if (imgs.length > 0) {
+          return `<span class="flags-wrap">${imgs.join("")}</span>`;
+        }
+
+        return countryStr;
+      }
+
+      function makePianistSortKey(name) {
+        if (!name) return "";
+        const p = name.trim().split(/\s+/);
+        if (p.length === 1) return p[0].toLowerCase();
+
+        const last = p[p.length - 1].toLowerCase();
+        const rest = p.slice(0, -1).join(" ").toLowerCase();
+        return `${last}, ${rest}`;
+      }
+
+      /**
+       * 最終結果とソート用カテゴリを作る
+       * - 賞があれば必ず併記
+       * - category / rankNum / hasPrize を返す
+       */
+      function determineFinalResult(c) {
+        const frRaw = c["最終順位"];
+        const prize = (c["賞"] || "").trim();
+        const hasPrize = prize !== "";
+        const hasFinal = Boolean(c["ファイナル"]);
+        const has3 = Boolean(c["第3"]);
+        const has2 = Boolean(c["第2"]);
+
+        // 1) 順位つき
+        if (frRaw !== "" && frRaw !== null && frRaw !== undefined) {
+          const rankNum = toIntSafe(frRaw, 999);
+          const baseText = `${rankNum}位`;
+          const text = hasPrize ? `${baseText}、${prize}` : baseText;
+
+          return {
+            text,
+            category: 0,
+            rankNum,
+            hasPrizeSort: hasPrize ? 0 : 1, // 0が上
+          };
+        }
+
+        // 2) ラウンド進出
+        let baseText = "-";
+        let category = 4;
+
+        if (hasFinal) {
+          baseText = "ファイナリスト";
+          category = 1;
+        } else if (has3) {
+          baseText = "第3ラウンド進出";
+          category = 2;
+        } else if (has2) {
+          baseText = "第2ラウンド進出";
+          category = 3;
+        }
+
+        const text = hasPrize ? `${baseText}、${prize}` : baseText;
+
+        return {
+          text,
+          category,
+          rankNum: 999,
+          hasPrizeSort: hasPrize ? 0 : 1,
+        };
+      }
+
+      function calcAge(birthStr) {
+        if (!birthStr) return { age: null, birthForSort: "" };
+
+        const b = new Date(birthStr);
+        if (Number.isNaN(b.getTime())) return { age: null, birthForSort: "" };
+
+        const r = new Date(CONTEST_REF_DATE_ISO);
+        let age = r.getFullYear() - b.getFullYear();
+        const md = r.getMonth() - b.getMonth();
+
+        if (md < 0 || (md === 0 && r.getDate() < b.getDate())) age--;
+
+        return { age, birthForSort: birthStr };
+      }
+
+      function renderTable(list) {
+        const tbody = document.getElementById("ranking-body");
+        tbody.innerHTML = "";
+
+        list.forEach((v) => {
+          const tr = document.createElement("tr");
+          const thumb = `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`;
+          const link = v.url;
+          const countryHtml = makeFlagsHtml(v.country);
+
+          tr.innerHTML = `
+            <td>${v.pianist}</td>
+            <td>${countryHtml}</td>
+            <td class="num-col">${v.ageYears ?? ""}</td>
+            <td class="num-col">${formatNumber(v.viewCount)}</td>
+            <td class="num-col">${formatNumber(v.likeCount)}</td>
+            <td class="num-col">${formatRatio(v.likeRatio)}</td>
+            <td class="rank-col">${v.finalResult}</td>
+            <td>
+              <a href="${link}" target="_blank">
+                <img src="${thumb}" class="thumb-img">
+              </a>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function sortAndRender(key, dir, type) {
+        const sorted = [...videos].sort((a, b) => {
+          if (key === "finalSortCategory") {
+            // ①カテゴリ（順位あり→ファイナル→3rd→2nd→1st止まり）
+            if (a.finalSortCategory !== b.finalSortCategory) {
+              return dir === "asc"
+                ? a.finalSortCategory - b.finalSortCategory
+                : b.finalSortCategory - a.finalSortCategory;
+            }
+
+            // ②（カテゴリ0のみ）順位数
+            if (a.finalSortRankNum !== b.finalSortRankNum) {
+              return dir === "asc"
+                ? a.finalSortRankNum - b.finalSortRankNum
+                : b.finalSortRankNum - a.finalSortRankNum;
+            }
+
+            // ③同率なら賞ありを上に（0が上）
+            if (a.finalSortHasPrize !== b.finalSortHasPrize) {
+              return dir === "asc"
+                ? a.finalSortHasPrize - b.finalSortHasPrize
+                : b.finalSortHasPrize - a.finalSortHasPrize;
+            }
+
+            // ④それでも同率なら姓ソートキー
+            return dir === "asc"
+              ? (a.pianistSortKey || "").localeCompare(
+                  b.pianistSortKey || "",
+                  "ja"
+                )
+              : (b.pianistSortKey || "").localeCompare(
+                  a.pianistSortKey || "",
+                  "ja"
+                );
+          }
+
+          if (key === "age") {
+            const na = typeof a.ageYears === "number" ? a.ageYears : 999;
+            const nb = typeof b.ageYears === "number" ? b.ageYears : 999;
+
+            if (na !== nb) return dir === "asc" ? na - nb : nb - na;
+
+            return dir === "asc"
+              ? (a.birthDate || "").localeCompare(b.birthDate || "", "ja")
+              : (b.birthDate || "").localeCompare(a.birthDate || "", "ja");
+          }
+
+          const va = a[key];
+          const vb = b[key];
+
+          if (type === "number") {
+            const na = Number(va);
+            const nb = Number(vb);
+            const safeA = Number.isFinite(na) ? na : -Infinity;
+            const safeB = Number.isFinite(nb) ? nb : -Infinity;
+
+            return dir === "asc" ? safeA - safeB : safeB - safeA;
+          }
+
+          return dir === "asc"
+            ? String(va || "").localeCompare(String(vb || ""), "ja")
+            : String(vb || "").localeCompare(String(va || ""), "ja");
+        });
+
+        renderTable(sorted);
+      }
+
+      function setupSortIcons() {
+        document.querySelectorAll(".sort-icon").forEach((ic) => {
+          ic.addEventListener("click", () => {
+            document
+              .querySelectorAll(".sort-icon")
+              .forEach((i) => i.classList.remove("active"));
+
+            ic.classList.add("active");
+            sortAndRender(ic.dataset.key, ic.dataset.dir, ic.dataset.type);
+          });
+        });
+      }
+
+      function formatTargetDateJp(iso) {
+        try {
+          const d = new Date(iso);
+          const wd = "月火水木金土日"[d.getDay() === 0 ? 6 : d.getDay() - 1];
+          return `${d.getFullYear()}年${String(d.getMonth() + 1).padStart(
+            2,
+            "0"
+          )}月${String(d.getDate()).padStart(2, "0")}日(${wd})`;
+        } catch (e) {
+          return iso;
+        }
+      }
+
+      async function loadAndBuild() {
+        const [roundRes, compRes] = await Promise.all([
+          fetch(BASE + "all_rounds_view_count.json", { cache: "no-store" }),
+          fetch(BASE + "competitors.json", { cache: "no-store" }),
+        ]);
+
+        if (!roundRes.ok || !compRes.ok) {
+          throw new Error("JSON fetch failed");
+        }
+
+        const rd = await roundRes.json();
+        const comps = await compRes.json();
+
+        const videosMap = rd.videos || {};
+        let unmatched = 0;
+
+        videos = comps
+          .filter((c) => c[ROUND_KEY])
+          .map((c) => {
+            const vid = c[ROUND_KEY];
+            const st = videosMap[vid];
+
+            if (!st) unmatched++;
+
+            const fr = determineFinalResult(c);
+            const age = calcAge(c["生年月日"] || "");
+
+            const viewCount = st ? st.viewCount : 0;
+            const likeCount = st ? st.likeCount : 0;
+            const likeRatio = viewCount > 0 ? likeCount / viewCount : null;
+
+            return {
+              videoId: vid,
+              url: `https://www.youtube.com/watch?v=${vid}`,
+              pianist: c["名前"] || "",
+              pianistSortKey: makePianistSortKey(c["名前"] || ""),
+              country: c["国"] || "",
+              finalResult: fr.text,
+              finalSortCategory: fr.category,
+              finalSortRankNum: fr.rankNum,
+              finalSortHasPrize: fr.hasPrizeSort,
+              viewCount,
+              likeCount,
+              likeRatio,
+              birthDate: age.birthForSort,
+              ageYears: age.age,
+            };
+          });
+
+        document.getElementById(
+          "summary-line"
+        ).textContent = `集計日: ${formatTargetDateJp(
+          rd.date || ""
+        )} ／ 対象動画数: ${videos.length} 本 ／ 年齢は2025年10月1日時点`;
+
+        if (unmatched > 0) {
+          document.getElementById(
+            "unmatched-line"
+          ).textContent = `※ ${unmatched} 本は再生数データが見つかりません（0 として表示）。`;
+        }
+
+        setupSortIcons();
+
+        const def = document.querySelector(
+          '.sort-icon[data-key="viewCount"][data-dir="desc"]'
+        );
+        if (def) def.classList.add("active");
+
+        sortAndRender("viewCount", "desc", "number");
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadAndBuild().catch((e) => {
+          document.getElementById("summary-line").textContent = "読み込みエラー";
+          console.error(e);
+        });
+      });
     </script>
   </body>
 </html>
