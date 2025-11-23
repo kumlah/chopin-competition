@@ -2,9 +2,8 @@ name: Run generate_all_rounds_view_count and commit
 
 on:
   workflow_dispatch:
-  # 必要ならスケジュール実行も追加可能
-  # schedule:
-  #   - cron: "30 18 * * *"  # UTC 18:30 = JST 03:30
+  schedule:
+    - cron: "0 19 * * 0"   # UTC 19:00 = JST 月曜 04:00
 
 permissions:
   contents: write
@@ -18,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+      uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
