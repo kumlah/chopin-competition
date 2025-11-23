@@ -323,7 +323,7 @@
 
       /**
        * 最終結果とソート用カテゴリを作る
-       * - 賞があれば必ず併記
+       * - 賞があれば必ず併記（ただし第2止まりは賞名だけ表示）
        * - category / rankNum / hasPrize を返す
        */
       function determineFinalResult(c) {
@@ -348,7 +348,7 @@
           };
         }
 
-        // 2) ラウンド進出
+        // 2) ラウンド進出（深いラウンドほど上）
         let baseText = "-";
         let category = 4;
 
@@ -359,11 +359,22 @@
           baseText = "第3ラウンド進出";
           category = 2;
         } else if (has2) {
-          baseText = "-";
-          category = 3;
+          // ★第2ページでは「第2止まり」は "-" 表示にする
+          if (ROUND_KEY === "第2") {
+            baseText = "-";
+            category = 3; // ソート上は第2止まり扱いを維持
+          } else {
+            baseText = "第2ラウンド進出";
+            category = 3;
+          }
         }
 
-        const text = hasPrize ? `${baseText}、${prize}` : baseText;
+        // ★賞ありの場合の表示ルール
+        // - baseText が "-"（第2止まり or 1st止まり）なら賞名だけ表示
+        // - それ以外は「進出 + 賞」
+        const text = hasPrize
+          ? (baseText === "-" ? `${prize}` : `${baseText}、${prize}`)
+          : baseText;
 
         return {
           text,
