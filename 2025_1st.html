@@ -222,6 +222,9 @@
       const ROUND_LABEL = "第1ラウンド";
       const CONTEST_REF_DATE_ISO = "2025-10-01";
 
+      // ★ GitHub Pages の公開ルート（必要ならここだけ変える）
+      const BASE = "/chopin-competition/";
+
       let videos = [];
 
       // flag-icons CDN（4x3 SVG）
@@ -230,24 +233,24 @@
 
       // 国名→ISO alpha-2 の最低限マップ
       const COUNTRY_CODE_OVERRIDE = {
-        Bulgaria: "bg",
-        Canada: "ca",
-        China: "cn",
-        Czechia: "cz",
-        France: "fr",
-        Georgia: "ge",
-        Germany: "de",
-        Hong Kong: "hk",
-        Italy: "it",
-        Japan: "jp",
-        Malaysia: "my",
-        Poland: "pl",
-        Republic of Korea: "kr",
-        Spain: "es",
-        United Kingdom of Great Britain and Northern Ireland: "gb",
-        United States of America: "us",
-        Portugal: "pt",
-        Vietnam: "vn",
+        "Bulgaria": "bg",
+        "Canada": "ca",
+        "China": "cn",
+        "Czechia": "cz",
+        "France": "fr",
+        "Georgia": "ge",
+        "Germany": "de",
+        "Hong Kong": "hk",
+        "Italy": "it",
+        "Japan": "jp",
+        "Malaysia": "my",
+        "Poland": "pl",
+        "Republic of Korea": "kr",
+        "Spain": "es",
+        "United Kingdom of Great Britain and Northern Ireland": "gb",
+        "United States of America": "us",
+        "Portugal": "pt",
+        "Vietnam": "vn",
       };
 
       function toIntSafe(v, def = 0) {
@@ -508,9 +511,13 @@
 
       async function loadAndBuild() {
         const [roundRes, compRes] = await Promise.all([
-          fetch("all_rounds_view_count.json", { cache: "no-store" }),
-          fetch("competitors.json", { cache: "no-store" }),
+          fetch(BASE + "all_rounds_view_count.json", { cache: "no-store" }),
+          fetch(BASE + "competitors.json", { cache: "no-store" }),
         ]);
+
+        if (!roundRes.ok || !compRes.ok) {
+          throw new Error("JSON fetch failed");
+        }
 
         const rd = await roundRes.json();
         const comps = await compRes.json();
