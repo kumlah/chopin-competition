@@ -219,3 +219,17 @@
               likeCount: v.likeCount,
               likeRatio: v.viewCount ? v.likeCount / v.viewCount : null,
               finalResult: c["賞"] || "-"
+            };
+          });
+
+        document.querySelectorAll(".sort-icon").forEach(ic => {
+          ic.onclick = () => sortAndRender(ic.dataset.key, ic.dataset.dir);
+        });
+
+        sortAndRender("viewCount", "desc");
+      }
+
+      loadAndBuild();
+    </script>
+  </body>
+</html>
