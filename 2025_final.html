@@ -92,18 +92,12 @@
         white-space: normal;
         word-break: break-word;
       }
-      .name-sort-label{
-        font-size: 0.7rem;
-        color:#666;
-        margin-left:0.25rem;
-      }
     </style>
   </head>
 
   <body>
     <a id="skip-to-content" href="#content">Skip to the content.</a>
 
-    <!-- ✅ ヘッダー復活（元どおり） -->
     <header class="page-header" role="banner">
       <h1 class="project-name">
         <a href="/chopin-competition/" style="color: #fff;">ショパコン勝手にYouTube聴衆賞(非公式)</a>
@@ -125,14 +119,11 @@
               <th>
                 名前
                 <span class="sort-icons">
-                  <!-- EN（従来） -->
-                  <span class="name-sort-label">EN</span>
                   <span
                     class="sort-icon"
                     data-key="pianistSortKey"
                     data-dir="asc"
                     data-type="string"
-                    title="英名で昇順"
                     >▲</span
                   >
                   <span
@@ -140,79 +131,84 @@
                     data-key="pianistSortKey"
                     data-dir="desc"
                     data-type="string"
-                    title="英名で降順"
-                    >▼</span
-                  >
-
-                  <!-- JP（読みでソート。日本語表記が空の人は下へ） -->
-                  <span class="name-sort-label">JP</span>
-                  <span
-                    class="sort-icon"
-                    data-key="pianistJpSortKey"
-                    data-dir="asc"
-                    data-type="string"
-                    title="日本語名（読み）で昇順。日本語表記なしは下へ"
-                    >▲</span
-                  >
-                  <span
-                    class="sort-icon"
-                    data-key="pianistJpSortKey"
-                    data-dir="desc"
-                    data-type="string"
-                    title="日本語名（読み）で降順。日本語表記なしは下へ"
                     >▼</span
                   >
                 </span>
               </th>
-
               <th style="width: 6em;">
                 国
                 <span class="sort-icons">
-                  <span class="sort-icon" data-key="country" data-dir="asc" data-type="string">▲</span>
-                  <span class="sort-icon" data-key="country" data-dir="desc" data-type="string">▼</span>
+                  <span class="sort-icon" data-key="country" data-dir="asc" data-type="string"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="country" data-dir="desc" data-type="string"
+                    >▼</span
+                  >
                 </span>
               </th>
-
               <th style="width: 5em;">
                 年齢
                 <span class="sort-icons">
-                  <span class="sort-icon" data-key="age" data-dir="asc" data-type="number">▲</span>
-                  <span class="sort-icon" data-key="age" data-dir="desc" data-type="number">▼</span>
+                  <span class="sort-icon" data-key="age" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="age" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
                 </span>
               </th>
-
               <th style="width: 8em;">
                 再生回数
                 <span class="sort-icons">
-                  <span class="sort-icon" data-key="viewCount" data-dir="asc" data-type="number">▲</span>
-                  <span class="sort-icon" data-key="viewCount" data-dir="desc" data-type="number">▼</span>
+                  <span class="sort-icon" data-key="viewCount" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="viewCount" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
                 </span>
               </th>
-
               <th style="width: 8em;">
                 高評価数
                 <span class="sort-icons">
-                  <span class="sort-icon" data-key="likeCount" data-dir="asc" data-type="number">▲</span>
-                  <span class="sort-icon" data-key="likeCount" data-dir="desc" data-type="number">▼</span>
+                  <span class="sort-icon" data-key="likeCount" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="likeCount" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
                 </span>
               </th>
-
               <th style="width: 8em;">
                 高評価率
                 <span class="sort-icons">
-                  <span class="sort-icon" data-key="likeRatio" data-dir="asc" data-type="number">▲</span>
-                  <span class="sort-icon" data-key="likeRatio" data-dir="desc" data-type="number">▼</span>
+                  <span class="sort-icon" data-key="likeRatio" data-dir="asc" data-type="number"
+                    >▲</span
+                  >
+                  <span class="sort-icon" data-key="likeRatio" data-dir="desc" data-type="number"
+                    >▼</span
+                  >
                 </span>
               </th>
-
               <th style="width: 8em;">
                 最終結果
                 <span class="sort-icons">
-                  <span class="sort-icon" data-key="finalSortCategory" data-dir="asc" data-type="number">▲</span>
-                  <span class="sort-icon" data-key="finalSortCategory" data-dir="desc" data-type="number">▼</span>
+                  <span
+                    class="sort-icon"
+                    data-key="finalSortCategory"
+                    data-dir="asc"
+                    data-type="number"
+                    >▲</span
+                  >
+                  <span
+                    class="sort-icon"
+                    data-key="finalSortCategory"
+                    data-dir="desc"
+                    data-type="number"
+                    >▼</span
+                  >
                 </span>
               </th>
-
               <th style="width: 11em;">動画</th>
             </tr>
           </thead>
@@ -262,6 +258,11 @@
         "Vietnam": "vn",
       };
 
+      function toIntSafe(v, def = 0) {
+        const n = parseInt(v, 10);
+        return Number.isFinite(n) ? n : def;
+      }
+
       function escapeHtml(s) {
         return String(s ?? "")
           .replace(/&/g, "&amp;")
@@ -269,11 +270,6 @@
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#39;");
-      }
-
-      function toIntSafe(v, def = 0) {
-        const n = parseInt(v, 10);
-        return Number.isFinite(n) ? n : def;
       }
 
       function formatNumber(n) {
@@ -337,15 +333,6 @@
         const last = p[p.length - 1].toLowerCase();
         const rest = p.slice(0, -1).join(" ").toLowerCase();
         return `${last}, ${rest}`;
-      }
-
-      // ✅ JPソートキー：読み→日本語表記→英名（表示はしない）
-      function makePianistJpSortKey(jpReading, jpName, enName) {
-        return (
-          (jpReading || "").trim() ||
-          (jpName || "").trim() ||
-          (enName || "").trim()
-        );
       }
 
       /**
@@ -453,31 +440,6 @@
 
       function sortAndRender(key, dir, type) {
         const sorted = [...videos].sort((a, b) => {
-
-          // ✅ JPソート専用：日本語表記が空の人は必ず下へ
-          if (key === "pianistJpSortKey") {
-            // pianistJpHasName: 0=日本語表記あり, 1=なし（なしを後ろへ）
-            if (a.pianistJpHasName !== b.pianistJpHasName) {
-              return dir === "asc"
-                ? a.pianistJpHasName - b.pianistJpHasName
-                : b.pianistJpHasName - a.pianistJpHasName;
-            }
-
-            // 同じグループ内は読みキーで比較（空ならフォールバック済み）
-            const va = a.pianistJpSortKey || "";
-            const vb = b.pianistJpSortKey || "";
-
-            const cmp = String(va).localeCompare(String(vb), "ja");
-            if (cmp !== 0) return dir === "asc" ? cmp : -cmp;
-
-            // タイブレーク：英名キー
-            const enCmp = (a.pianistSortKey || "").localeCompare(
-              (b.pianistSortKey || ""),
-              "ja"
-            );
-            return dir === "asc" ? enCmp : -enCmp;
-          }
-
           if (key === "finalSortCategory") {
             if (a.finalSortCategory !== b.finalSortCategory) {
               return dir === "asc"
@@ -598,9 +560,8 @@
 
             const enName = c["名前"] || "";
             const jpName = (c["名前（日本語表記）"] || "").trim();
-            const jpReading = (c["名前（日本語表記）の読み"] || "").trim();
 
-            // ✅ 表示：ENは全員必ず。JPはある人だけ2行目に表示。読みは表示しない。
+            // ✅ 表示：ENは全員必ず。JPはある人だけ2行目に表示。
             let pianistHtml = escapeHtml(enName);
             if (jpName) {
               pianistHtml += `<br><span class="muted">${escapeHtml(jpName)}</span>`;
@@ -612,14 +573,7 @@
 
               pianist: enName,
               pianistHtml,
-
               pianistSortKey: makePianistSortKey(enName),
-
-              // ✅ JPソート用（読み優先）
-              pianistJpSortKey: makePianistJpSortKey(jpReading, jpName, enName),
-
-              // ✅ JP表記が空なら「下へ」送るフラグ（0=あり, 1=なし）
-              pianistJpHasName: jpName ? 0 : 1,
 
               country: c["国"] || "",
 
@@ -637,7 +591,6 @@
             };
           });
 
-        // ✅ 読み込み中…を消してサマリー表示
         document.getElementById("summary-line").textContent =
           `集計日: ${formatTargetDateJp(rd.date || "")}` +
           ` ／ 対象動画数: ${videos.length} 本 ／ 年齢は2025年10月1日時点`;
